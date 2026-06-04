@@ -1,0 +1,108 @@
+================================================================================
+EXPLICACIÓN DE CÓDIGOS Y FUNCIONES PRINCIPALES - CHURN SHIELD AI
+================================================================================
+
+Este proyecto es una aplicación web moderna construida con Next.js (App Router),
+TypeScript, TailwindCSS y Recharts para visualizar y predecir el riesgo de
+abandono (churn) de clientes utilizando Inteligencia Artificial.
+
+A continuación se detalla la estructura y el funcionamiento de cada uno de los
+códigos, componentes y funciones clave del sistema.
+
+--------------------------------------------------------------------------------
+1. CONTEXTO GLOBAL DE LA APLICACIÓN (State Management)
+--------------------------------------------------------------------------------
+Archivo: context/DashboardContext.tsx
+
+Este archivo centraliza el estado global de la aplicación para que todos los
+componentes se mantengan sincronizados sin necesidad de pasar props manualmente
+por múltiples niveles.
+
+Claves y funciones del archivo:
+- Tipo 'Customer': Define la estructura TypeScript de un cliente, incluyendo
+  id, nombre, plan, riesgo de churn (de 0 a 100), estado, avatar, fecha de ingreso
+  y datos de XAI (Explainable AI o IA explicativa).
+- 'MOCK_CUSTOMERS': Un arreglo con datos simulados de 4 clientes que contienen
+  puntuaciones de riesgo y factores de abandono (Pricing, Support, Features, Usability).
+- 'DashboardProvider': Componente proveedor de contexto de React. Define y
+  expone tres estados clave a través del hook useDashboard:
+  * 'activeTab': La pestaña de navegación actualmente seleccionada ("Home" por defecto).
+  * 'selectedCustomer': El cliente seleccionado de la lista (por defecto el primero).
+  * 'customers': La lista completa de clientes (de solo lectura).
+- 'useDashboard': Hook personalizado que permite a cualquier componente acceder
+  fácilmente al estado del Dashboard y a sus funciones modificadoras
+  (setActiveTab, setSelectedCustomer).
+
+--------------------------------------------------------------------------------
+2. PÁGINA PRINCIPAL Y DISEÑO BASE
+--------------------------------------------------------------------------------
+Archivos:
+- app/layout.tsx: Configura la estructura HTML básica de la aplicación, carga la
+  fuente Geist de Google Fonts, habilita la clase 'dark' para el modo oscuro
+  y define los metadatos de SEO ("Churn Shield AI - Dashboard").
+- app/page.tsx: Es el punto de entrada principal del Dashboard.
+  * Envuelve toda la interfaz dentro del '<DashboardProvider>'.
+  * Define un diseño de rejilla (CSS Grid) responsivo de 12 columnas:
+    - Sidebar: Barra lateral fija (ocupa todo el alto).
+    - TopBar: Barra de navegación superior.
+    - Área principal: Contenedor con scroll vertical que distribuye las
+      tarjetas y paneles informativos.
+
+--------------------------------------------------------------------------------
+3. COMPONENTES DE ESTRUCTURA Y NAVEGACIÓN
+--------------------------------------------------------------------------------
+Archivos:
+- components/Sidebar.tsx:
+  * Muestra el menú de navegación lateral con las opciones (Home, Analytics, Users,
+    Campaigns, Settings).
+  * Consume 'activeTab' y 'setActiveTab' del contexto para resaltar el enlace activo
+    y cambiar de sección cuando el usuario hace clic.
+- components/TopBar.tsx:
+  * Muestra el encabezado superior con el nombre del proyecto activo ("Predicte").
+  * Incluye una barra de búsqueda funcional al presionar "Enter" (simulada con alert).
+  * Ofrece accesos rápidos para cambiar el layout de la interfaz, alertas/notificaciones
+    y un menú de usuario con avatar.
+
+--------------------------------------------------------------------------------
+4. COMPONENTES DEL DASHBOARD (Visualización e Interacción)
+--------------------------------------------------------------------------------
+
+- Churn Risk Overview (components/Dashboard/ChurnRiskOverview.tsx):
+  * Muestra la proporción general de clientes clasificados por nivel de riesgo.
+  * Utiliza un gráfico de dona ('PieChart' de la librería recharts) para renderizar
+    los segmentos: Low Risk (41%), Medium Risk (35%) e High Risk (24%).
+  * Genera automáticamente una leyenda inferior interactiva con colores representativos.
+
+- Interactive Customer List (components/Dashboard/CustomerList.tsx):
+  * Rinde una tabla interactiva con todos los clientes del sistema.
+  * 'searchQuery': Estado local que filtra los clientes en tiempo real a partir del
+    texto ingresado en el buscador superior.
+  * Al hacer clic en cualquier fila de la tabla, ejecuta 'setSelectedCustomer(c)',
+    lo que actualiza globalmente los datos del perfil y las sugerencias del agente de IA.
+  * Los puntajes de riesgo cambian de color dinámicamente: rojo (>70%), naranja (>40%)
+    o verde (<=40%).
+
+- Detailed Customer Profile (components/Dashboard/CustomerProfile.tsx):
+  * Muestra los detalles del cliente seleccionado actual en el contexto.
+  * Cuenta con un gráfico de barras horizontales ('BarChart') de recharts que visualiza
+    los factores clave de Churn (Explainable AI / XAI Reasons). Muestra el puntaje
+    que la IA asignó a elementos como "Soporte", "Precio", "Funcionalidades", etc.
+  * Se actualiza instantáneamente en cuanto el usuario selecciona otro cliente en la lista.
+
+- Churn Trends (components/Dashboard/ChurnTrends.tsx):
+  * Gráfico de área múltiple ('AreaChart') que rastrea la evolución histórica de tres
+    métricas durante los últimos 6 meses: nuevos usuarios ('new'), retención ('retention')
+    y tasa de abandono ('churn').
+  * Utiliza gradientes de CSS para lograr un aspecto visual moderno con transparencias.
+
+- AI Agent Panel (components/Dashboard/AIAgentPanel.tsx):
+  * Es el núcleo inteligente de interacción con el operador.
+  * 'RecommendationItem': Rinde una lista de tareas recomendadas que cambian de color
+    y prioridad de acuerdo con el nivel de riesgo del cliente seleccionado.
+  * Chat Conversacional Interactivo:
+    - Mantiene un historial de mensajes en el estado local 'messages' que se inicia
+      con una sugerencia dinámica personalizada para el cliente en pantalla.
+    - 'handleSendMessage': Envía el mensaje del usuario y simula una llamada asíncrona
+      hacia una IA mediante un 'setTimeout' de 1.5 segundos, mostrando un estado de
+      espera ("isTyping") con animación de puntos flotantes.
+    - Incluye soporte simulado para notas de voz ("Mic") y botones de acción rápida.

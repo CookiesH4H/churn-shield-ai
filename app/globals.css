@@ -13,11 +13,11 @@
   --hover-darker: #e5e7eb;
   --text-muted: #4b5563;
   --text-bright: #111827;
-  
+
   /* Brand colors (Arca Continental) */
-  --brand-red: #c8102e;
+  --brand-red: #8d1414;
   --brand-brown: #6f2c16;
-  --brand-red-hover: #a50d26;
+  --brand-red-hover: #a50d0d9c;
   --brand-brown-hover: #562211;
   --brand-red-muted: rgba(200, 16, 46, 0.08);
   --brand-brown-muted: rgba(111, 44, 22, 0.08);
@@ -26,21 +26,21 @@
 }
 
 .dark {
-  --background: #0b0e14;
+  --background: #551111;
   --foreground: #f1f5f9;
-  --card: #121620;
-  --card-border: #1e293b;
-  --sidebar: #121620;
-  --sidebar-border: #1e293b;
-  --topbar: #0b0e14;
-  --topbar-border: #1e293b;
-  --hover: #1e293b;
-  --hover-darker: #334155;
+  --card: #201212;
+  --card-border: #3b1e1e;
+  --sidebar: #201212;
+  --sidebar-border: #3b1e1e;
+  --topbar: #140b0b;
+  --topbar-border: #3b1e1e;
+  --hover: #3b1e1e;
+  --hover-darker: #553333;
   --text-muted: #94a3b8;
   --text-bright: #ffffff;
-  
+
   /* Brand colors (Arca Continental - optimized for dark mode contrast) */
-  --brand-red: #ff3b47;
+  --brand-red: #691318;
   --brand-brown: #a8583b;
   --brand-red-hover: #ff606b;
   --brand-brown-hover: #bc6a4d;
@@ -63,7 +63,7 @@
   --color-hover-darker: var(--hover-darker);
   --color-text-muted: var(--text-muted);
   --color-text-bright: var(--text-bright);
-  
+
   --color-brand-red: var(--brand-red);
   --color-brand-brown: var(--brand-brown);
   --color-brand-red-hover: var(--brand-red-hover);
@@ -72,7 +72,7 @@
   --color-brand-brown-muted: var(--brand-brown-muted);
   --color-brand-red-border: var(--brand-red-border);
   --color-brand-brown-border: var(--brand-brown-border);
-  
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

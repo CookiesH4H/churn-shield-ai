@@ -15,10 +15,10 @@ const data = [
 
 export default function ChurnTrends() {
   return (
-    <div className="bg-[#121620] border border-slate-800 rounded-2xl p-6 shadow-xl h-full flex flex-col relative overflow-hidden">
+    <div className="bg-card border border-card-border rounded-2xl p-6 shadow-xl h-full flex flex-col relative overflow-hidden transition-colors duration-300">
       <div className="flex items-center justify-between mb-6 relative z-10">
-        <h3 className="text-lg font-semibold text-white">Churn Trends (Last 6 Months)</h3>
-        <button className="text-slate-500 hover:text-white transition-colors">
+        <h3 className="text-lg font-semibold text-text-bright">Tendencias de Churn (Últimos 6 Meses)</h3>
+        <button className="text-text-muted hover:text-text-bright transition-colors">
           <MoreHorizontal size={20} />
         </button>
       </div>
@@ -36,28 +36,33 @@ export default function ChurnTrends() {
           >
             <defs>
               <linearGradient id="colorChurn" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                <stop offset="5%" stopColor="var(--brand-red)" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="var(--brand-red)" stopOpacity={0}/>
               </linearGradient>
               <linearGradient id="colorRetention" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
               </linearGradient>
               <linearGradient id="colorNew" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                <stop offset="5%" stopColor="var(--brand-brown)" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="var(--brand-brown)" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-            <XAxis dataKey="name" stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} tickLine={false} axisLine={false} />
-            <YAxis stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} tickLine={false} axisLine={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--card-border)" vertical={false} />
+            <XAxis dataKey="name" stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)', fontSize: 12 }} tickLine={false} axisLine={false} />
+            <YAxis stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)', fontSize: 12 }} tickLine={false} axisLine={false} />
             <Tooltip 
-              contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
-              itemStyle={{ color: '#fff' }}
+              contentStyle={{ 
+                backgroundColor: 'var(--card)', 
+                border: '1px solid var(--card-border)', 
+                borderRadius: '8px', 
+                color: 'var(--foreground)' 
+              }}
+              itemStyle={{ color: 'var(--foreground)' }}
             />
-            <Area type="monotone" dataKey="churn" stroke="#ef4444" strokeWidth={3} fillOpacity={1} fill="url(#colorChurn)" />
+            <Area type="monotone" dataKey="churn" stroke="var(--brand-red)" strokeWidth={3} fillOpacity={1} fill="url(#colorChurn)" />
             <Area type="monotone" dataKey="retention" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRetention)" />
-            <Area type="monotone" dataKey="new" stroke="#f59e0b" strokeWidth={3} fillOpacity={1} fill="url(#colorNew)" />
+            <Area type="monotone" dataKey="new" stroke="var(--brand-brown)" strokeWidth={3} fillOpacity={1} fill="url(#colorNew)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>

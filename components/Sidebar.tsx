@@ -6,12 +6,14 @@ import { useDashboard } from "@/context/DashboardContext";
 export default function Sidebar() {
   const { activeTab, setActiveTab } = useDashboard();
   return (
-    <aside className="w-20 lg:w-64 flex flex-col items-center lg:items-start border-r border-slate-800 bg-[#121620] h-full py-6">
+    <aside className="w-20 lg:w-64 flex flex-col items-center lg:items-start border-r border-sidebar-border bg-sidebar h-full py-6 transition-colors duration-300">
       <div className="flex items-center gap-3 px-0 lg:px-6 mb-10 w-full justify-center lg:justify-start">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-yellow-500 to-amber-500 flex items-center justify-center font-bold text-xl text-black shadow-lg">
-          P
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-brown to-brand-red flex items-center justify-center font-bold text-xl text-white shadow-lg">
+          AC
         </div>
-        <span className="hidden lg:block text-xl font-semibold tracking-wide">Predicte</span>
+        <span className="hidden lg:block text-xl font-bold tracking-wide text-brand-red">
+          Arca <span className="text-text-bright font-semibold">Predicte</span>
+        </span>
       </div>
 
       <nav className="flex flex-col gap-2 w-full px-2 lg:px-4 flex-1">
@@ -32,11 +34,11 @@ function NavItem({ icon, label, active = false, onClick }: { icon: React.ReactNo
       onClick={(e) => { e.preventDefault(); onClick(); }}
       className={`flex flex-col lg:flex-row items-center gap-1 lg:gap-3 p-3 lg:px-4 lg:py-3 rounded-xl transition-all duration-200 group ${
         active
-          ? "bg-slate-800/60 text-white shadow-sm border border-slate-700/50"
-          : "text-slate-400 hover:text-white hover:bg-slate-800/40"
+          ? "bg-brand-red-muted text-brand-red shadow-sm border border-brand-red-border"
+          : "text-text-muted hover:text-text-bright hover:bg-hover"
       }`}
     >
-      <div className={`${active ? "text-yellow-400" : "group-hover:text-yellow-400 transition-colors"}`}>
+      <div className={`${active ? "text-brand-red" : "text-text-muted group-hover:text-brand-red transition-colors"}`}>
         {icon}
       </div>
       <span className="text-[10px] lg:text-sm font-medium">{label}</span>

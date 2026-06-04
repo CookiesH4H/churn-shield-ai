@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export type Customer = {
   id: number;
@@ -52,12 +52,16 @@ export const MOCK_CUSTOMERS: Customer[] = [
   },
 ];
 
+export type Theme = "light" | "dark" | "system";
+
 type DashboardContextType = {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   selectedCustomer: Customer;
   setSelectedCustomer: (customer: Customer) => void;
   customers: Customer[];
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
 };
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -66,12 +70,52 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [activeTab, setActiveTab] = useState("Home");
   const [customers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer>(MOCK_CUSTOMERS[0]);
+  const [theme, setThemeState] = useState<Theme>("system");
+
+  // Load saved theme on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as Theme;
+    if (savedTheme) {
+      setThemeState(savedTheme);
+    }
+  }, []);
+
+  // Sync theme with HTML class and handle system preference changes
+  useEffect(() => {
+    const root = window.document.documentElement;
+    
+    const applyTheme = (currentTheme: Theme) => {
+      root.classList.remove("light", "dark");
+      
+      if (currentTheme === "system") {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        root.classList.add(systemTheme);
+      } else {
+        root.classList.add(currentTheme);
+      }
+    };
+
+    applyTheme(theme);
+
+    if (theme === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = () => applyTheme("system");
+      mediaQuery.addEventListener("change", mediaQuery.matches ? handleChange : handleChange); // safe wrapper
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+  }, [theme]);
+
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+    localStorage.setItem("theme", newTheme);
+  };
 
   return (
     <DashboardContext.Provider value={{
       activeTab, setActiveTab,
       selectedCustomer, setSelectedCustomer,
-      customers
+      customers,
+      theme, setTheme
     }}>
       {children}
     </DashboardContext.Provider>

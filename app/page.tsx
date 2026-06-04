@@ -10,7 +10,7 @@ import { DashboardProvider } from "@/context/DashboardContext";
 export default function Home() {
   return (
     <DashboardProvider>
-      <div className="flex h-screen overflow-hidden bg-[#0b0e14] text-slate-200">
+      <div className="flex h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
       {/* Sidebar Navigation */}
       <Sidebar />
 
@@ -25,11 +25,10 @@ export default function Home() {
             
             {/* Page Title */}
             <div className="flex items-center justify-between mb-8">
-              <h1 className="text-3xl font-bold text-white tracking-tight">SaaS Dashboard</h1>
-              <div className="hidden lg:flex items-center gap-4 text-sm text-slate-400">
-                <span>Modern typography</span>
-                <span className="text-white font-medium bg-slate-800/50 px-3 py-1 rounded-md border border-slate-700">Inter</span>
-                <span className="hover:text-white cursor-pointer transition-colors">Poppins Plus</span>
+              <h1 className="text-3xl font-bold text-text-bright tracking-tight">Churn Shield AI</h1>
+              <div className="hidden lg:flex items-center gap-4 text-sm text-text-muted">
+                <span>Plataforma de Predicción</span>
+                <span className="text-text-bright font-medium bg-hover px-3 py-1 rounded-md border border-card-border">Arca Continental</span>
               </div>
             </div>
 

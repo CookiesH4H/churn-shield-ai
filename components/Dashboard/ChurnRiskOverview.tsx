@@ -3,15 +3,15 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const data = [
-  { name: "Low Risk", value: 41, color: "#10b981" },
-  { name: "Medium Risk", value: 35, color: "#f59e0b" },
-  { name: "High Risk", value: 24, color: "#ef4444" },
+  { name: "Riesgo Bajo", value: 41, color: "#10b981" },
+  { name: "Riesgo Medio", value: 35, color: "var(--brand-brown)" },
+  { name: "Riesgo Alto", value: 24, color: "var(--brand-red)" },
 ];
 
 export default function ChurnRiskOverview() {
   return (
-    <div className="bg-[#121620] border border-slate-800 rounded-2xl p-6 flex flex-col h-full shadow-xl">
-      <h3 className="text-lg font-semibold text-white mb-6">Churn Risk Overview</h3>
+    <div className="bg-card border border-card-border rounded-2xl p-6 flex flex-col h-full shadow-xl transition-colors duration-300">
+      <h3 className="text-lg font-semibold text-text-bright mb-6">Resumen de Riesgo de Churn</h3>
       
       <div className="flex-1 min-h-[200px] relative">
         <ResponsiveContainer width="100%" height="100%">
@@ -30,26 +30,31 @@ export default function ChurnRiskOverview() {
               ))}
             </Pie>
             <Tooltip 
-              contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
-              itemStyle={{ color: '#fff' }}
+              contentStyle={{ 
+                backgroundColor: 'var(--card)', 
+                border: '1px solid var(--card-border)', 
+                borderRadius: '8px', 
+                color: 'var(--foreground)' 
+              }}
+              itemStyle={{ color: 'var(--foreground)' }}
             />
           </PieChart>
         </ResponsiveContainer>
         
         {/* Decorative center element */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-24 h-24 rounded-full bg-slate-900/40 shadow-inner blur-sm"></div>
+          <div className="w-24 h-24 rounded-full bg-hover/40 shadow-inner blur-sm"></div>
         </div>
       </div>
 
       <div className="flex justify-between items-center mt-6">
-        {data.reverse().map((item) => (
+        {[...data].reverse().map((item) => (
           <div key={item.name} className="flex flex-col items-center">
             <div className="flex items-center gap-2 mb-1">
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></span>
-              <span className="text-xs text-slate-400 font-medium">{item.name.replace(' Risk', '')}</span>
+              <span className="text-xs text-text-muted font-medium">{item.name.replace('Riesgo ', '')}</span>
             </div>
-            <span className="text-xl font-bold text-white">{item.value}%</span>
+            <span className="text-xl font-bold text-text-bright">{item.value}%</span>
           </div>
         ))}
       </div>

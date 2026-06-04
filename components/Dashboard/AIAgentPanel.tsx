@@ -7,23 +7,31 @@ import { useDashboard } from "@/context/DashboardContext";
 type Message = { id: number; sender: 'user' | 'agent'; text: string; action?: boolean };
 
 export default function AIAgentPanel() {
-  const { selectedCustomer } = useDashboard();
+  const { selectedCustomer, t } = useDashboard();
   
-  const getInitialMessage = (): Message => ({
-    id: Date.now(), 
-    sender: 'agent', 
-    text: `El riesgo de abandono (churn) de ${selectedCustomer.name} es ${selectedCustomer.risk > 70 ? 'alto' : selectedCustomer.risk > 40 ? 'medio' : 'bajo'} (${selectedCustomer.risk}%). \nAcción recomendada: Ofrecer un descuento del 20% en su próxima renovación y programar proactivamente una llamada de éxito del cliente para solucionar inquietudes.`,
-    action: true
-  });
+  const getInitialMessage = (): Message => {
+    const riskLevel = selectedCustomer.risk > 70 
+      ? t.aiAgent.riskLevelHigh 
+      : selectedCustomer.risk > 40 
+      ? t.aiAgent.riskLevelMedium 
+      : t.aiAgent.riskLevelLow;
+
+    return {
+      id: Date.now(), 
+      sender: 'agent', 
+      text: t.aiAgent.initialMessage(selectedCustomer.name, riskLevel, selectedCustomer.risk),
+      action: true
+    };
+  };
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
-  // Reset chat messages when selected customer changes
+  // Reset chat messages when selected customer or translation language changes
   useEffect(() => {
     setMessages([getInitialMessage()]);
-  }, [selectedCustomer.id]);
+  }, [selectedCustomer.id, t]);
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
@@ -38,7 +46,7 @@ export default function AIAgentPanel() {
       const newAiMsg: Message = { 
         id: Date.now() + 1, 
         sender: 'agent', 
-        text: `He tomado nota sobre eso para ${selectedCustomer.name}. ¿Te gustaría que redacte una plantilla de correo electrónico con la propuesta?` 
+        text: t.aiAgent.aiResponse(selectedCustomer.name) 
       };
       setMessages(prev => [...prev, newAiMsg]);
       setIsTyping(false);
@@ -52,9 +60,9 @@ export default function AIAgentPanel() {
         <div className="absolute inset-0 bg-gradient-to-b from-brand-red/5 to-transparent pointer-events-none" />
         
         <div className="flex items-center justify-between mb-6 relative z-10">
-          <h3 className="text-lg font-semibold text-text-bright">Recomendaciones de IA</h3>
+          <h3 className="text-lg font-semibold text-text-bright">{t.aiAgent.recTitle}</h3>
           <button 
-            onClick={() => alert("Abriendo opciones de recomendaciones...")}
+            onClick={() => alert(t.aiAgent.recOptionsAlert)}
             className="text-text-muted hover:text-text-bright transition-colors"
           >
             <MoreHorizontal size={20} />
@@ -64,17 +72,17 @@ export default function AIAgentPanel() {
         <div className="space-y-4 relative z-10">
           <RecommendationItem 
             number={1} 
-            title="Ofrecer Descuento del 20%" 
+            title={t.aiAgent.rec1} 
             buttonColor="bg-brand-red-muted/60 border-brand-red-border text-brand-red hover:bg-brand-red hover:text-white"
           />
           <RecommendationItem 
             number={2} 
-            title="Llamada de Éxito del Cliente" 
+            title={t.aiAgent.rec2} 
             buttonColor="bg-brand-brown-muted/60 border-brand-brown-border text-brand-brown hover:bg-brand-brown hover:text-white"
           />
           <RecommendationItem 
             number={3} 
-            title="Ver Historial de Facturación" 
+            title={t.aiAgent.rec3} 
             buttonColor="bg-brand-brown-muted/60 border-brand-brown-border text-brand-brown hover:bg-brand-brown hover:text-white"
           />
         </div>
@@ -88,9 +96,9 @@ export default function AIAgentPanel() {
         <div className="absolute -inset-[1px] bg-gradient-to-r from-brand-brown-border to-brand-red-border rounded-2xl -z-10 blur-[1px]"></div>
         
         <div className="flex items-center justify-between mb-6 relative z-10">
-          <h3 className="text-lg font-semibold text-text-bright">Chat de Asistencia IA</h3>
+          <h3 className="text-lg font-semibold text-text-bright">{t.aiAgent.chatTitle}</h3>
           <button 
-            onClick={() => alert("Abriendo opciones de chat...")}
+            onClick={() => alert(t.aiAgent.chatOptionsAlert)}
             className="text-text-muted hover:text-text-bright transition-colors"
           >
             <MoreHorizontal size={20} />
@@ -110,8 +118,8 @@ export default function AIAgentPanel() {
               `}>
                 {msg.sender === 'agent' ? (
                   <>
-                    <span className="font-bold text-brand-red">Asistente:</span> {msg.text.split('\n')[0]} <br className="mb-2"/>
-                    {msg.text.split('\n')[1] && <><span className="font-semibold text-text-bright">Acción sugerida:</span> {msg.text.split('\n')[1].replace('Acción recomendada: ', '').replace('Recommended action: ', '')}</>}
+                    <span className="font-bold text-brand-red">{t.aiAgent.assistantName}:</span> {msg.text.split('\n')[0]} <br className="mb-2"/>
+                    {msg.text.split('\n')[1] && <><span className="font-semibold text-text-bright">{t.aiAgent.suggestPrefix}:</span> {msg.text.split('\n')[1].replace('Acción recomendada: ', '').replace('Recommended action: ', '')}</>}
                   </>
                 ) : (
                   msg.text
@@ -135,7 +143,7 @@ export default function AIAgentPanel() {
           <div className="relative flex items-center group/input">
             <input 
               type="text" 
-              placeholder="Escribe un mensaje..." 
+              placeholder={t.aiAgent.sendPlaceholder}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => {
@@ -144,7 +152,7 @@ export default function AIAgentPanel() {
               className="w-full bg-hover/40 border border-card-border rounded-full pl-10 pr-12 py-3 text-sm text-text-bright focus:outline-none focus:border-brand-red/50 focus:ring-1 focus:ring-brand-red/50 transition-all placeholder:text-text-muted/40 shadow-inner"
             />
             <button 
-              onClick={() => alert("¡Entrada de voz activada!")}
+              onClick={() => alert(t.aiAgent.voiceAlert)}
               className="absolute left-3 text-text-muted hover:text-text-bright transition-colors"
             >
                <Mic size={18} />
@@ -163,6 +171,7 @@ export default function AIAgentPanel() {
 }
 
 function RecommendationItem({ number, title, buttonColor }: { number: number, title: string, buttonColor: string }) {
+  const { t } = useDashboard();
   return (
     <div className="flex items-center justify-between group">
       <div className="flex items-center gap-3">
@@ -170,10 +179,10 @@ function RecommendationItem({ number, title, buttonColor }: { number: number, ti
         <span className="text-text-bright text-sm font-medium group-hover:text-brand-red transition-colors">{title}</span>
       </div>
       <button 
-        onClick={() => alert(`Iniciando Acción: ${title}`)}
+        onClick={() => alert(t.aiAgent.runActionAlert(title))}
         className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-all ${buttonColor}`}
       >
-        Ejecutar
+        {t.aiAgent.recommendationAction}
       </button>
     </div>
   );

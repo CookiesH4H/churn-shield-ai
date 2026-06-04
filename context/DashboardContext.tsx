@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { TranslationKeys, es, en } from "./translations";
 
 export type Customer = {
   id: number;
@@ -53,6 +54,7 @@ export const MOCK_CUSTOMERS: Customer[] = [
 ];
 
 export type Theme = "light" | "dark" | "system";
+export type Language = "es" | "en";
 
 type DashboardContextType = {
   activeTab: string;
@@ -62,6 +64,9 @@ type DashboardContextType = {
   customers: Customer[];
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  lang: Language;
+  setLang: (lang: Language) => void;
+  t: TranslationKeys;
 };
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -71,12 +76,17 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [customers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer>(MOCK_CUSTOMERS[0]);
   const [theme, setThemeState] = useState<Theme>("system");
+  const [lang, setLangState] = useState<Language>("es");
 
-  // Load saved theme on mount
+  // Load saved theme and language on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as Theme;
     if (savedTheme) {
       setThemeState(savedTheme);
+    }
+    const savedLang = localStorage.getItem("lang") as Language;
+    if (savedLang) {
+      setLangState(savedLang);
     }
   }, []);
 
@@ -100,7 +110,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     if (theme === "system") {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handleChange = () => applyTheme("system");
-      mediaQuery.addEventListener("change", mediaQuery.matches ? handleChange : handleChange); // safe wrapper
+      mediaQuery.addEventListener("change", handleChange);
       return () => mediaQuery.removeEventListener("change", handleChange);
     }
   }, [theme]);
@@ -110,12 +120,21 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("theme", newTheme);
   };
 
+  const setLang = (newLang: Language) => {
+    setLangState(newLang);
+    localStorage.setItem("lang", newLang);
+  };
+
+  // Get active translation keys
+  const t = lang === "es" ? es : en;
+
   return (
     <DashboardContext.Provider value={{
       activeTab, setActiveTab,
       selectedCustomer, setSelectedCustomer,
       customers,
-      theme, setTheme
+      theme, setTheme,
+      lang, setLang, t
     }}>
       {children}
     </DashboardContext.Provider>

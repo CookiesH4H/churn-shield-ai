@@ -2,6 +2,7 @@
 
 import { MoreHorizontal } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useDashboard } from "@/context/DashboardContext";
 
 const data = [
   { name: 'Jan', churn: 1200, retention: 2400, new: 1800 },
@@ -14,10 +15,18 @@ const data = [
 ];
 
 export default function ChurnTrends() {
+  const { t } = useDashboard();
+
+  // Translate month names dynamically
+  const translatedData = data.map(item => ({
+    ...item,
+    name: t.churnTrends.months[item.name] || item.name
+  }));
+
   return (
     <div className="bg-card border border-card-border rounded-2xl p-6 shadow-xl h-full flex flex-col relative overflow-hidden transition-colors duration-300">
       <div className="flex items-center justify-between mb-6 relative z-10">
-        <h3 className="text-lg font-semibold text-text-bright">Tendencias de Churn (Últimos 6 Meses)</h3>
+        <h3 className="text-lg font-semibold text-text-bright">{t.churnTrends.title}</h3>
         <button className="text-text-muted hover:text-text-bright transition-colors">
           <MoreHorizontal size={20} />
         </button>
@@ -26,7 +35,7 @@ export default function ChurnTrends() {
       <div className="flex-1 w-full min-h-[250px] relative z-10">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
-            data={data}
+            data={translatedData}
             margin={{
               top: 10,
               right: 10,
@@ -60,9 +69,9 @@ export default function ChurnTrends() {
               }}
               itemStyle={{ color: 'var(--foreground)' }}
             />
-            <Area type="monotone" dataKey="churn" stroke="var(--brand-red)" strokeWidth={3} fillOpacity={1} fill="url(#colorChurn)" />
-            <Area type="monotone" dataKey="retention" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRetention)" />
-            <Area type="monotone" dataKey="new" stroke="var(--brand-brown)" strokeWidth={3} fillOpacity={1} fill="url(#colorNew)" />
+            <Area name={t.churnTrends.churn} type="monotone" dataKey="churn" stroke="var(--brand-red)" strokeWidth={3} fillOpacity={1} fill="url(#colorChurn)" />
+            <Area name={t.churnTrends.retention} type="monotone" dataKey="retention" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRetention)" />
+            <Area name={t.churnTrends.new} type="monotone" dataKey="new" stroke="var(--brand-brown)" strokeWidth={3} fillOpacity={1} fill="url(#colorNew)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>

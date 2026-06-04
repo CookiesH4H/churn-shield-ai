@@ -1,17 +1,20 @@
 "use client";
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-
-const data = [
-  { name: "Riesgo Bajo", value: 41, color: "#10b981" },
-  { name: "Riesgo Medio", value: 35, color: "var(--brand-brown)" },
-  { name: "Riesgo Alto", value: 24, color: "var(--brand-red)" },
-];
+import { useDashboard } from "@/context/DashboardContext";
 
 export default function ChurnRiskOverview() {
+  const { t } = useDashboard();
+
+  const data = [
+    { name: t.riskOverview.low, value: 41, color: "#10b981" },
+    { name: t.riskOverview.medium, value: 35, color: "var(--brand-brown)" },
+    { name: t.riskOverview.high, value: 24, color: "var(--brand-red)" },
+  ];
+
   return (
     <div className="bg-card border border-card-border rounded-2xl p-6 flex flex-col h-full shadow-xl transition-colors duration-300">
-      <h3 className="text-lg font-semibold text-text-bright mb-6">Resumen de Riesgo de Churn</h3>
+      <h3 className="text-lg font-semibold text-text-bright mb-6">{t.riskOverview.title}</h3>
       
       <div className="flex-1 min-h-[200px] relative">
         <ResponsiveContainer width="100%" height="100%">
@@ -52,7 +55,7 @@ export default function ChurnRiskOverview() {
           <div key={item.name} className="flex flex-col items-center">
             <div className="flex items-center gap-2 mb-1">
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></span>
-              <span className="text-xs text-text-muted font-medium">{item.name.replace('Riesgo ', '')}</span>
+              <span className="text-xs text-text-muted font-medium">{item.name}</span>
             </div>
             <span className="text-xl font-bold text-text-bright">{item.value}%</span>
           </div>

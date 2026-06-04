@@ -4,7 +4,7 @@ import { Home, BarChart2, Users, Megaphone, Settings } from "lucide-react";
 import { useDashboard } from "@/context/DashboardContext";
 
 export default function Sidebar() {
-  const { activeTab, setActiveTab } = useDashboard();
+  const { activeTab, setActiveTab, t } = useDashboard();
   return (
     <aside className="w-20 lg:w-64 flex flex-col items-center lg:items-start border-r border-sidebar-border bg-sidebar h-full py-6 transition-colors duration-300">
       <div className="flex items-center gap-3 px-0 lg:px-6 mb-10 w-full justify-center lg:justify-start">
@@ -17,11 +17,11 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex flex-col gap-2 w-full px-2 lg:px-4 flex-1">
-        <NavItem icon={<Home size={22} />} label="Home" active={activeTab === "Home"} onClick={() => setActiveTab("Home")} />
-        <NavItem icon={<BarChart2 size={22} />} label="Analytics" active={activeTab === "Analytics"} onClick={() => setActiveTab("Analytics")} />
-        <NavItem icon={<Users size={22} />} label="Users" active={activeTab === "Users"} onClick={() => setActiveTab("Users")} />
-        <NavItem icon={<Megaphone size={22} />} label="Campaigns" active={activeTab === "Campaigns"} onClick={() => setActiveTab("Campaigns")} />
-        <NavItem icon={<Settings size={22} />} label="Settings" active={activeTab === "Settings"} onClick={() => setActiveTab("Settings")} />
+        <NavItem icon={<Home size={22} />} label={t.sidebar.home} active={activeTab === "Home"} onClick={() => setActiveTab("Home")} />
+        <NavItem icon={<BarChart2 size={22} />} label={t.sidebar.analytics} active={activeTab === "Analytics"} onClick={() => setActiveTab("Analytics")} />
+        <NavItem icon={<Users size={22} />} label={t.sidebar.users} active={activeTab === "Users"} onClick={() => setActiveTab("Users")} />
+        <NavItem icon={<Megaphone size={22} />} label={t.sidebar.campaigns} active={activeTab === "Campaigns"} onClick={() => setActiveTab("Campaigns")} />
+        <NavItem icon={<Settings size={22} />} label={t.sidebar.settings} active={activeTab === "Settings"} onClick={() => setActiveTab("Settings")} />
       </nav>
     </aside>
   );

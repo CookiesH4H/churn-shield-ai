@@ -5,7 +5,7 @@ import { useDashboard } from "@/context/DashboardContext";
 import { useState } from "react";
 
 export default function CustomerList() {
-  const { customers, selectedCustomer, setSelectedCustomer } = useDashboard();
+  const { customers, selectedCustomer, setSelectedCustomer, t } = useDashboard();
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredCustomers = customers.filter(c => 
@@ -15,9 +15,9 @@ export default function CustomerList() {
   return (
     <div className="bg-card border border-card-border rounded-2xl p-6 flex flex-col h-full shadow-xl transition-colors duration-300">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-text-bright">Lista de Clientes</h3>
+        <h3 className="text-lg font-semibold text-text-bright">{t.customerList.title}</h3>
         <button 
-          onClick={() => alert("Abriendo opciones de lista...")}
+          onClick={() => alert(t.customerList.filterAlert)}
           className="text-text-muted hover:text-text-bright transition-colors"
         >
           <MoreHorizontal size={20} />
@@ -29,18 +29,18 @@ export default function CustomerList() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-brand-red transition-colors" />
           <input 
             type="text" 
-            placeholder="Buscar clientes..." 
+            placeholder={t.customerList.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-hover/40 border border-card-border rounded-lg pl-9 pr-4 py-2 text-sm text-text-bright focus:outline-none focus:border-brand-red/50 transition-all placeholder:text-text-muted/50"
           />
         </div>
         <button 
-          onClick={() => alert("Los filtros avanzados se abrirán aquí")}
+          onClick={() => alert(t.customerList.filterAlert)}
           className="flex items-center gap-2 px-3 py-2 bg-hover/40 border border-card-border rounded-lg text-sm font-medium text-text-muted hover:text-text-bright hover:bg-hover transition-all"
         >
           <Filter size={16} />
-          Filtro
+          {t.customerList.filterLabel}
         </button>
       </div>
 
@@ -48,10 +48,10 @@ export default function CustomerList() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-card-border/80">
-              <th className="pb-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Nombre</th>
-              <th className="pb-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Plan</th>
-              <th className="pb-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Puntuación de Riesgo</th>
-              <th className="pb-3 text-xs font-semibold text-text-muted uppercase tracking-wider">Estado</th>
+              <th className="pb-3 text-xs font-semibold text-text-muted uppercase tracking-wider">{t.customerList.colName}</th>
+              <th className="pb-3 text-xs font-semibold text-text-muted uppercase tracking-wider">{t.customerList.colPlan}</th>
+              <th className="pb-3 text-xs font-semibold text-text-muted uppercase tracking-wider">{t.customerList.colRisk}</th>
+              <th className="pb-3 text-xs font-semibold text-text-muted uppercase tracking-wider">{t.customerList.colStatus}</th>
             </tr>
           </thead>
           <tbody>
@@ -73,7 +73,7 @@ export default function CustomerList() {
                   </td>
                   <td className="py-3 px-4 text-sm text-text-muted">{c.plan}</td>
                   <td className="py-3 px-4 text-sm font-semibold" style={{ color: c.risk > 70 ? '#ef4444' : c.risk > 40 ? '#f59e0b' : '#10b981' }}>
-                    {c.risk}% Riesgo
+                    {t.customerList.riskScore(c.risk)}
                   </td>
                   <td className="py-3 pl-4">
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${
@@ -83,7 +83,11 @@ export default function CustomerList() {
                         ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                         : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                     }`}>
-                      {c.status === 'At Risk' ? 'En Riesgo' : c.status === 'Neutral' ? 'Neutral' : 'Estable'}
+                      {c.status === 'At Risk' 
+                        ? t.customerList.statusAtRisk 
+                        : c.status === 'Neutral' 
+                        ? t.customerList.statusNeutral 
+                        : t.customerList.statusStable}
                     </span>
                   </td>
                 </tr>

@@ -1,0 +1,40 @@
+REQUISITOS PARA CORRER ESTE PROYECTO EN VISUAL STUDIO CODE
+==========================================================
+
+Si quieres descargar y correr este proyecto (Churn Shield AI) en Visual Studio Code en tu computadora o en la de alguien más, necesitas instalar los siguientes programas:
+
+1. NODE.JS (Requerido)
+   - ¿Para qué sirve? Es el entorno de ejecución necesario para correr React y Next.js.
+   - Link de descarga: https://nodejs.org/ (Descarga la versión "LTS" recomendada para la mayoría de los usuarios).
+   - Para verificar que se instaló correctamente, abre la terminal y escribe: `node -v` y `npm -v`
+
+2. VISUAL STUDIO CODE (Requerido)
+   - ¿Para qué sirve? Es el editor de código donde trabajarás.
+   - Link de descarga: https://code.visualstudio.com/
+
+3. GIT (Recomendado)
+   - ¿Para qué sirve? Para clonar el código desde GitHub y mantener los cambios de tus compañeras sincronizados.
+   - Link de descarga: https://git-scm.com/downloads
+
+
+PASOS PARA CORRER EL PROYECTO:
+==============================
+
+Paso 1: Clonar el repositorio
+Abre Visual Studio Code, ve a "Terminal" -> "New Terminal" y ejecuta este comando:
+git clone https://github.com/Dangamu/churn-shield-ai.git
+
+Paso 2: Abrir la carpeta
+Abre la carpeta "churn-shield-ai" en Visual Studio Code (File -> Open Folder).
+
+Paso 3: Instalar las dependencias
+Abre nuevamente la terminal dentro de VS Code y ejecuta:
+npm install
+
+Paso 4: Levantar el servidor
+Una vez que termine la instalación, inicia el servidor de desarrollo ejecutando:
+npm run dev
+
+Paso 5: Ver la aplicación
+Abre tu navegador (Chrome, Edge, etc.) y ve a la dirección:
+http://localhost:3000

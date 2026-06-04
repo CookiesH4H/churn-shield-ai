@@ -18,12 +18,12 @@ export default function TopBar() {
 
       <div className="flex items-center gap-6">
         <div className="relative group">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-yellow-400 transition-colors" />
           <input 
             type="text" 
             placeholder="Search" 
             onKeyDown={(e) => e.key === 'Enter' && alert(`Searching for: ${e.currentTarget.value}`)}
-            className="bg-slate-900/50 border border-slate-800 rounded-full pl-10 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all w-64 placeholder:text-slate-600"
+            className="bg-slate-900/50 border border-slate-800 rounded-full pl-10 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/50 transition-all w-64 placeholder:text-slate-600"
           />
         </div>
 

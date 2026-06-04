@@ -27,13 +27,13 @@ export default function CustomerList() {
 
       <div className="flex gap-3 mb-6">
         <div className="relative flex-1 group">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-yellow-400 transition-colors" />
           <input 
             type="text" 
             placeholder="Search customers..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-900/50 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-purple-500/50 transition-all placeholder:text-slate-600"
+            className="w-full bg-slate-900/50 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-yellow-500/50 transition-all placeholder:text-slate-600"
           />
         </div>
         <button 
@@ -68,8 +68,8 @@ export default function CustomerList() {
                 >
                   <td className="py-3 pr-4">
                     <div className="flex items-center gap-3">
-                      <img src={c.avatar} alt={c.name} className={`w-8 h-8 rounded-full bg-slate-800 transition-all ${isSelected ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-[#121620]' : ''}`} />
-                      <span className={`text-sm font-medium ${isSelected ? 'text-purple-400' : 'text-white'}`}>{c.name}</span>
+                      <img src={c.avatar} alt={c.name} className={`w-8 h-8 rounded-full bg-slate-800 transition-all ${isSelected ? 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-[#121620]' : ''}`} />
+                      <span className={`text-sm font-medium ${isSelected ? 'text-yellow-400' : 'text-white'}`}>{c.name}</span>
                     </div>
                   </td>
                   <td className="py-3 px-4 text-sm text-slate-300">{c.plan}</td>

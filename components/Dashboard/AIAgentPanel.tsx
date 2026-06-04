@@ -47,7 +47,7 @@ export default function AIAgentPanel() {
     <div className="flex flex-col gap-6 h-full">
       {/* AI Recommendations */}
       <div className="bg-[#121620] border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/5 to-transparent pointer-events-none" />
         
         <div className="flex items-center justify-between mb-6 relative z-10">
           <h3 className="text-lg font-semibold text-white">AI Recommendations</h3>
@@ -80,10 +80,10 @@ export default function AIAgentPanel() {
 
       {/* Conversational AI Chat */}
       <div className="bg-[#121620] border border-slate-800 rounded-2xl p-6 shadow-xl flex-1 flex flex-col relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/5 via-transparent to-yellow-500/5 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
         
         {/* Glow borders using pseudo elements */}
-        <div className="absolute -inset-[1px] bg-gradient-to-r from-cyan-500/30 to-purple-500/30 rounded-2xl -z-10 blur-[1px]"></div>
+        <div className="absolute -inset-[1px] bg-gradient-to-r from-amber-500/30 to-yellow-500/30 rounded-2xl -z-10 blur-[1px]"></div>
         
         <div className="flex items-center justify-between mb-6 relative z-10">
           <h3 className="text-lg font-semibold text-white">Conversational AI Chat</h3>
@@ -99,8 +99,8 @@ export default function AIAgentPanel() {
           {messages.map(msg => (
             <div key={msg.id} className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
               {msg.sender === 'agent' && (
-                <div className="w-8 h-8 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center shrink-0">
-                  <Bot size={16} className="text-purple-400" />
+                <div className="w-8 h-8 rounded-full bg-yellow-500/20 border border-yellow-500/30 flex items-center justify-center shrink-0">
+                  <Bot size={16} className="text-yellow-400" />
                 </div>
               )}
               <div className={`bg-slate-800/50 border border-slate-700/50 p-4 text-sm leading-relaxed shadow-sm max-w-[85%]
@@ -108,7 +108,7 @@ export default function AIAgentPanel() {
               `}>
                 {msg.sender === 'agent' ? (
                   <>
-                    <span className="font-semibold text-purple-300">Agent:</span> {msg.text.split('\n')[0]} <br className="mb-2"/>
+                    <span className="font-semibold text-yellow-300">Agent:</span> {msg.text.split('\n')[0]} <br className="mb-2"/>
                     {msg.text.split('\n')[1] && <><span className="font-semibold text-white">Recommended action:</span> {msg.text.split('\n')[1].replace('Recommended action: ', '')}</>}
                   </>
                 ) : (
@@ -139,7 +139,7 @@ export default function AIAgentPanel() {
               onKeyDown={(e) => {
                 if(e.key === 'Enter') handleSendMessage();
               }}
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-full pl-10 pr-12 py-3 text-sm text-slate-200 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500 shadow-inner"
+              className="w-full bg-slate-900/80 border border-slate-700 rounded-full pl-10 pr-12 py-3 text-sm text-slate-200 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/50 transition-all placeholder:text-slate-500 shadow-inner"
             />
             <button 
               onClick={() => alert("Voice input activated!")}
@@ -149,7 +149,7 @@ export default function AIAgentPanel() {
             </button>
             <button 
               onClick={handleSendMessage}
-              className="absolute right-2 w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white hover:bg-purple-600 transition-colors shadow-lg shadow-purple-500/20"
+              className="absolute right-2 w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-black hover:bg-yellow-600 transition-colors shadow-lg shadow-yellow-500/20"
             >
               <Send size={14} className="ml-0.5" />
             </button>

@@ -10,7 +10,7 @@ export default function CustomerList() {
 
   const filteredCustomers = customers.filter(c => 
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    c.plan.toLowerCase().includes(searchQuery.toLowerCase())
+    c.planTier.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
     <div className="bg-card border border-card-border rounded-2xl p-6 flex flex-col h-full shadow-xl transition-colors duration-300">
@@ -57,6 +57,8 @@ export default function CustomerList() {
           <tbody>
             {filteredCustomers.map((c) => {
               const isSelected = selectedCustomer.id === c.id;
+              const isHighRisk = c.riskLevel === "High" || c.riskLevel === "Critical";
+              const isMediumRisk = c.riskLevel === "Medium";
               return (
                 <tr 
                   key={c.id} 
@@ -71,21 +73,21 @@ export default function CustomerList() {
                       <span className={`text-sm font-medium ${isSelected ? 'text-brand-red font-semibold' : 'text-text-bright'}`}>{c.name}</span>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-sm text-text-muted">{c.plan}</td>
-                  <td className="py-3 px-4 text-sm font-semibold" style={{ color: c.risk > 70 ? '#ef4444' : c.risk > 40 ? '#f59e0b' : '#10b981' }}>
-                    {t.customerList.riskScore(c.risk)}
+                  <td className="py-3 px-4 text-sm text-text-muted">{c.planTier}</td>
+                  <td className="py-3 px-4 text-sm font-semibold" style={{ color: isHighRisk ? '#ef4444' : isMediumRisk ? '#f59e0b' : '#10b981' }}>
+                    {t.customerList.riskScore(c.churnProbability)}
                   </td>
                   <td className="py-3 pl-4">
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${
-                      c.status === 'At Risk' 
+                      isHighRisk 
                         ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20' 
-                        : c.status === 'Neutral'
+                        : isMediumRisk
                         ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                         : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                     }`}>
-                      {c.status === 'At Risk' 
+                      {isHighRisk 
                         ? t.customerList.statusAtRisk 
-                        : c.status === 'Neutral' 
+                        : isMediumRisk 
                         ? t.customerList.statusNeutral 
                         : t.customerList.statusStable}
                     </span>

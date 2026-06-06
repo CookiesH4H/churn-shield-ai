@@ -7,19 +7,29 @@ import { useDashboard } from "@/context/DashboardContext";
 type Message = { id: number; sender: 'user' | 'agent'; text: string; action?: boolean };
 
 export default function AIAgentPanel() {
-  const { selectedCustomer, t } = useDashboard();
+  const { selectedCustomer, t, lang } = useDashboard();
   
   const getInitialMessage = (): Message => {
-    const riskLevel = selectedCustomer.risk > 70 
+    const isHigh = selectedCustomer.churnProbability > 70;
+    const isMed = selectedCustomer.churnProbability > 40;
+    const riskLevelStr = isHigh 
       ? t.aiAgent.riskLevelHigh 
-      : selectedCustomer.risk > 40 
+      : isMed 
       ? t.aiAgent.riskLevelMedium 
       : t.aiAgent.riskLevelLow;
+
+    const factorDescription = t.customerProfile.factors[selectedCustomer.primaryRiskFactor];
+    const initialText = t.aiAgent.initialMessage(selectedCustomer.name, riskLevelStr, selectedCustomer.churnProbability);
+    
+    // Add additional contextual explanation from the primary risk factor
+    const factorExplanation = selectedCustomer.primaryRiskFactor !== "none"
+      ? `\n\n[Diagnóstico] El factor principal de riesgo es: ${factorDescription}.`
+      : "";
 
     return {
       id: Date.now(), 
       sender: 'agent', 
-      text: t.aiAgent.initialMessage(selectedCustomer.name, riskLevel, selectedCustomer.risk),
+      text: initialText + factorExplanation,
       action: true
     };
   };
@@ -36,17 +46,39 @@ export default function AIAgentPanel() {
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
 
-    const newUserMsg: Message = { id: Date.now(), sender: 'user', text: inputValue };
+    const userText = inputValue;
+    const newUserMsg: Message = { id: Date.now(), sender: 'user', text: userText };
     setMessages(prev => [...prev, newUserMsg]);
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI response
+    // Simulate AI response based on user input
     setTimeout(() => {
+      const lowerInput = userText.toLowerCase();
+      let responseText = "";
+
+      if (lowerInput.includes("descuento") || lowerInput.includes("discount") || lowerInput.includes("precio") || lowerInput.includes("pricing") || lowerInput.includes("mrr")) {
+        responseText = lang === "es" 
+          ? `He redactado una propuesta para ${selectedCustomer.name} que incluye un descuento del 20% en su próxima renovación. ¿Te gustaría que la envíe de inmediato?`
+          : `I have drafted an offer for ${selectedCustomer.name} with a 20% discount on their next renewal. Would you like me to send it now?`;
+      } else if (lowerInput.includes("soporte") || lowerInput.includes("support") || lowerInput.includes("ticket") || lowerInput.includes("queja")) {
+        responseText = lang === "es"
+          ? `Entendido. He escalado los ${selectedCustomer.openTickets} tickets abiertos de ${selectedCustomer.name} con prioridad crítica para resolverlos en las próximas 2 horas.`
+          : `Understood. I have escalated the ${selectedCustomer.openTickets} open tickets for ${selectedCustomer.name} with critical priority to be resolved within the next 2 hours.`;
+      } else if (lowerInput.includes("llamada") || lowerInput.includes("call") || lowerInput.includes("contacto") || lowerInput.includes("reunion") || lowerInput.includes("agenda")) {
+        responseText = lang === "es"
+          ? `Estoy buscando espacios en la agenda para una llamada de éxito del cliente con ${selectedCustomer.name}. ¿Sugiero mañana por la tarde?`
+          : `I am looking for availability for a customer success call with ${selectedCustomer.name}. Should I suggest tomorrow afternoon?`;
+      } else {
+        responseText = lang === "es"
+          ? `Tomé nota sobre eso. Debido a que el factor principal del cliente es "${t.customerProfile.factors[selectedCustomer.primaryRiskFactor]}", te recomiendo ejecutar las acciones sugeridas arriba.`
+          : `Noted. Since the customer's primary risk factor is "${t.customerProfile.factors[selectedCustomer.primaryRiskFactor]}", I recommend executing one of the actions suggested above.`;
+      }
+
       const newAiMsg: Message = { 
         id: Date.now() + 1, 
         sender: 'agent', 
-        text: t.aiAgent.aiResponse(selectedCustomer.name) 
+        text: responseText 
       };
       setMessages(prev => [...prev, newAiMsg]);
       setIsTyping(false);
@@ -70,21 +102,19 @@ export default function AIAgentPanel() {
         </div>
 
         <div className="space-y-4 relative z-10">
-          <RecommendationItem 
-            number={1} 
-            title={t.aiAgent.rec1} 
-            buttonColor="bg-brand-red-muted/60 border-brand-red-border text-brand-red hover:bg-brand-red hover:text-white"
-          />
-          <RecommendationItem 
-            number={2} 
-            title={t.aiAgent.rec2} 
-            buttonColor="bg-brand-brown-muted/60 border-brand-brown-border text-brand-brown hover:bg-brand-brown hover:text-white"
-          />
-          <RecommendationItem 
-            number={3} 
-            title={t.aiAgent.rec3} 
-            buttonColor="bg-brand-brown-muted/60 border-brand-brown-border text-brand-brown hover:bg-brand-brown hover:text-white"
-          />
+          {(t.aiAgent.recs[selectedCustomer.primaryRiskFactor] || t.aiAgent.recs.none).map((rec, index) => {
+            const buttonColor = index === 0
+              ? "bg-brand-red-muted/60 border-brand-red-border text-brand-red hover:bg-brand-red hover:text-white"
+              : "bg-brand-brown-muted/60 border-brand-brown-border text-brand-brown hover:bg-brand-brown hover:text-white";
+            return (
+              <RecommendationItem 
+                key={rec}
+                number={index + 1} 
+                title={rec} 
+                buttonColor={buttonColor}
+              />
+            );
+          })}
         </div>
       </div>
 

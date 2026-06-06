@@ -49,6 +49,24 @@ export type TranslationKeys = {
     support: string;
     features: string;
     usability: string;
+    lastLogin: string;
+    daysInactive: string;
+    sessions: string;
+    usage: string;
+    weeklyTime: string;
+    failures: string;
+    billing: string;
+    tickets: string;
+    nps: string;
+    predictionTitle: string;
+    factorLabel: string;
+    probLabel: string;
+    factors: {
+      low_usage: string;
+      payment_failures: string;
+      support_tickets: string;
+      none: string;
+    };
   };
   churnTrends: {
     title: string;
@@ -59,9 +77,7 @@ export type TranslationKeys = {
   };
   aiAgent: {
     recTitle: string;
-    rec1: string;
-    rec2: string;
-    rec3: string;
+    recs: Record<"low_usage" | "payment_failures" | "support_tickets" | "none", string[]>;
     chatTitle: string;
     micAlert: string;
     sendPlaceholder: string;
@@ -77,6 +93,26 @@ export type TranslationKeys = {
     chatOptionsAlert: string;
     runActionAlert: (title: string) => string;
     voiceAlert: string;
+  };
+  usersTab: {
+    title: string;
+    subtitle: string;
+    registerBtn: string;
+    colId: string;
+    colChannel: string;
+    colJoined: string;
+    filterAllChannels: string;
+    filterAllRisks: string;
+    modalTitle: string;
+    labelName: string;
+    labelEmail: string;
+    labelChannel: string;
+    labelDate: string;
+    placeholderName: string;
+    placeholderEmail: string;
+    btnSubmit: string;
+    btnCancel: string;
+    successToast: string;
   };
 };
 
@@ -131,6 +167,24 @@ export const en: TranslationKeys = {
     support: "Support",
     features: "Features",
     usability: "Usability",
+    lastLogin: "Last Login",
+    daysInactive: "Days Inactive",
+    sessions: "Sessions (Last 30d)",
+    usage: "Core Feature Usage",
+    weeklyTime: "Weekly Time Spent",
+    failures: "Payment Failures",
+    billing: "Billing Cycle",
+    tickets: "Open Tickets",
+    nps: "NPS Score",
+    predictionTitle: "AI Churn Diagnostics",
+    factorLabel: "Primary Risk Factor",
+    probLabel: "Churn Probability",
+    factors: {
+      low_usage: "Low usage of core feature",
+      payment_failures: "Recurring payment failures",
+      support_tickets: "Unresolved support tickets & low NPS",
+      none: "No active risk factors identified"
+    }
   },
   churnTrends: {
     title: "Churn Trends (Last 6 Months)",
@@ -141,9 +195,12 @@ export const en: TranslationKeys = {
   },
   aiAgent: {
     recTitle: "AI Recommendations",
-    rec1: "Offer 20% Discount",
-    rec2: "Schedule Success Call",
-    rec3: "Check Billing History",
+    recs: {
+      low_usage: ["Schedule Core Demo", "Send Feature Tutorial", "Offer Support Outreach"],
+      payment_failures: ["Retry Payment Gateway", "Send Update Card Link", "Contact Billing Team"],
+      support_tickets: ["Escalate Open Tickets", "Schedule Exec Call", "Offer 20% Churn Discount"],
+      none: ["Upsell to Premium Plan", "Ask for Review", "Send Loyalty Gift"]
+    },
     chatTitle: "Conversational AI Chat",
     micAlert: "Voice input activated!",
     sendPlaceholder: "Type a message...",
@@ -161,6 +218,26 @@ export const en: TranslationKeys = {
     chatOptionsAlert: "Opening Chat Options...",
     runActionAlert: (title: string) => `Triggering Action: ${title}`,
     voiceAlert: "Voice input activated!"
+  },
+  usersTab: {
+    title: "Customer Supervision",
+    subtitle: "Arca Continental Operators Panel",
+    registerBtn: "Register Customer",
+    colId: "ID",
+    colChannel: "Channel",
+    colJoined: "Registration Date",
+    filterAllChannels: "All Channels",
+    filterAllRisks: "All Risks",
+    modalTitle: "Register New Customer",
+    labelName: "Company / Contact Name",
+    labelEmail: "Contact Email",
+    labelChannel: "Distribution Channel",
+    labelDate: "Registration Date",
+    placeholderName: "e.g., Tienda El Callejón or Juan Pérez",
+    placeholderEmail: "e.g., contacto@tienda.com",
+    btnSubmit: "Register",
+    btnCancel: "Cancel",
+    successToast: "Customer registered successfully!"
   }
 };
 
@@ -215,6 +292,24 @@ export const es: TranslationKeys = {
     support: "Soporte",
     features: "Funciones",
     usability: "Usabilidad",
+    lastLogin: "Último Inicio de Sesión",
+    daysInactive: "Días Inactivos",
+    sessions: "Sesiones (Últimos 30 días)",
+    usage: "Uso de Función Principal",
+    weeklyTime: "Tiempo Semanal",
+    failures: "Fallos de Pago",
+    billing: "Ciclo de Facturación",
+    tickets: "Tickets Abiertos",
+    nps: "Puntuación NPS",
+    predictionTitle: "Diagnóstico de Churn IA",
+    factorLabel: "Factor de Riesgo Principal",
+    probLabel: "Probabilidad de Churn",
+    factors: {
+      low_usage: "Bajo uso de la función principal",
+      payment_failures: "Fallos recurrentes de pago",
+      support_tickets: "Tickets de soporte sin resolver y bajo NPS",
+      none: "Sin factores de riesgo activos"
+    }
   },
   churnTrends: {
     title: "Tendencias de Churn (Últimos 6 Meses)",
@@ -225,9 +320,12 @@ export const es: TranslationKeys = {
   },
   aiAgent: {
     recTitle: "Recomendaciones de IA",
-    rec1: "Ofrecer Descuento del 20%",
-    rec2: "Llamada de Éxito del Cliente",
-    rec3: "Ver Historial de Facturación",
+    recs: {
+      low_usage: ["Agendar Demo de Función", "Enviar Tutorial de Uso", "Ofrecer Asistencia de Configuración"],
+      payment_failures: ["Reintentar Pasarela", "Enviar Enlace de Tarjeta", "Contactar Facturación"],
+      support_tickets: ["Escalar Tickets de Soporte", "Agendar Llamada Directa", "Ofrecer 20% de Descuento"],
+      none: ["Ofrecer Plan Superior", "Pedir Reseña / NPS", "Enviar Detalle de Fidelización"]
+    },
     chatTitle: "Chat de Asistencia IA",
     micAlert: "¡Entrada de voz activada!",
     sendPlaceholder: "Escribe un mensaje...",
@@ -245,5 +343,25 @@ export const es: TranslationKeys = {
     chatOptionsAlert: "Abriendo opciones de chat...",
     runActionAlert: (title: string) => `Iniciando Acción: ${title}`,
     voiceAlert: "¡Entrada de voz activada!"
+  },
+  usersTab: {
+    title: "Supervisión de Clientes",
+    subtitle: "Panel de Operadores Arca Continental",
+    registerBtn: "Registrar Cliente",
+    colId: "ID",
+    colChannel: "Canal",
+    colJoined: "Fecha de Registro",
+    filterAllChannels: "Todos los Canales",
+    filterAllRisks: "Todos los Riesgos",
+    modalTitle: "Registrar Nuevo Cliente",
+    labelName: "Nombre de la Empresa / Contacto",
+    labelEmail: "Correo de Contacto",
+    labelChannel: "Canal de Distribución",
+    labelDate: "Fecha de Registro",
+    placeholderName: "Ej: Tienda El Callejón o Juan Pérez",
+    placeholderEmail: "Ej: contacto@tienda.com",
+    btnSubmit: "Registrar",
+    btnCancel: "Cancelar",
+    successToast: "¡Cliente registrado con éxito!"
   }
 };

@@ -4,53 +4,91 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { TranslationKeys, es, en } from "./translations";
 
 export type Customer = {
-  id: number;
+  id: string; // user_id
   name: string;
-  plan: string;
-  risk: number;
-  status: string;
+  email: string;
+  planTier: string;
+  signupDate: string;
   avatar: string;
-  joinedDate: string;
-  xaiData: { name: string; score: number; color: string }[];
+  lastLogin: string;
+  daysInactive: number;
+  sessionsLast30d: number;
+  coreFeatureUsage: number;
+  timeSpentWeekly: number;
+  mrr: number;
+  billingCycle: "Mensual" | "Anual" | "Monthly" | "Annual";
+  paymentFailures: number;
+  openTickets: number;
+  npsScore: number;
+  churnProbability: number;
+  riskLevel: "Low" | "Medium" | "High" | "Critical";
+  primaryRiskFactor: "low_usage" | "payment_failures" | "support_tickets" | "none";
 };
 
 export const MOCK_CUSTOMERS: Customer[] = [
   { 
-    id: 1, name: "Liam Davies", plan: "Pro Plan", risk: 88, status: "At Risk", avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=Liam", joinedDate: "Joined May '23",
-    xaiData: [
-      { name: 'Pricing', score: 35000, color: '#ef4444' },
-      { name: 'Support', score: 25000, color: '#f59e0b' },
-      { name: 'Features', score: 18000, color: '#f59e0b' },
-      { name: 'Usability', score: 10000, color: '#10b981' },
-    ]
+    id: "USR-98421", 
+    name: "Carlos Mendoza (Tienda La Unión)", 
+    email: "carlos.mendoza@launion.com",
+    planTier: "Canal Tradicional", 
+    signupDate: "2023-05-12",
+    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=Carlos",
+    lastLogin: "2026-05-22",
+    daysInactive: 14,
+    sessionsLast30d: 3,
+    coreFeatureUsage: 25,
+    timeSpentWeekly: 45,
+    mrr: 99.00,
+    billingCycle: "Mensual",
+    paymentFailures: 1,
+    openTickets: 5,
+    npsScore: 4,
+    churnProbability: 82,
+    riskLevel: "High",
+    primaryRiskFactor: "support_tickets"
   },
   { 
-    id: 2, name: "Chloe Bennett", plan: "Free", risk: 65, status: "Neutral", avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=Chloe", joinedDate: "Joined Aug '23",
-    xaiData: [
-      { name: 'Features', score: 22000, color: '#f59e0b' },
-      { name: 'Pricing', score: 20000, color: '#f59e0b' },
-      { name: 'Support', score: 12000, color: '#10b981' },
-      { name: 'Usability', score: 8000, color: '#10b981' },
-    ]
+    id: "USR-74829", 
+    name: "Sofía Rodríguez (Minisúper Centro)", 
+    email: "sofia.rod@supercentro.com",
+    planTier: "Canal Tradicional", 
+    signupDate: "2024-02-15",
+    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=Sofia",
+    lastLogin: "2026-05-26",
+    daysInactive: 10,
+    sessionsLast30d: 5,
+    coreFeatureUsage: 18,
+    timeSpentWeekly: 30,
+    mrr: 49.00,
+    billingCycle: "Mensual",
+    paymentFailures: 0,
+    openTickets: 1,
+    npsScore: 7,
+    churnProbability: 48,
+    riskLevel: "Medium",
+    primaryRiskFactor: "low_usage"
   },
   { 
-    id: 3, name: "Mike Zhang", plan: "Basic", risk: 22, status: "Stable", avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=Mike", joinedDate: "Joined Jan '24",
-    xaiData: [
-      { name: 'Pricing', score: 5000, color: '#10b981' },
-      { name: 'Features', score: 4000, color: '#10b981' },
-      { name: 'Usability', score: 3500, color: '#10b981' },
-      { name: 'Support', score: 2000, color: '#10b981' },
-    ]
-  },
-  { 
-    id: 4, name: "Jessica Lee", plan: "Business", risk: 79, status: "At Risk", avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=Jessica", joinedDate: "Joined Nov '22",
-    xaiData: [
-      { name: 'Support', score: 31000, color: '#ef4444' },
-      { name: 'Usability', score: 24000, color: '#f59e0b' },
-      { name: 'Pricing', score: 19000, color: '#f59e0b' },
-      { name: 'Features', score: 15000, color: '#10b981' },
-    ]
-  },
+    id: "USR-12948", 
+    name: "Alejandro Gómez (Super Express)", 
+    email: "a.gomez@superexpress.net",
+    planTier: "Canal Moderno", 
+    signupDate: "2022-11-08",
+    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=Alejandro",
+    lastLogin: "2026-06-05",
+    daysInactive: 0,
+    sessionsLast30d: 28,
+    coreFeatureUsage: 92,
+    timeSpentWeekly: 340,
+    mrr: 99.00,
+    billingCycle: "Anual",
+    paymentFailures: 0,
+    openTickets: 0,
+    npsScore: 9,
+    churnProbability: 12,
+    riskLevel: "Low",
+    primaryRiskFactor: "none"
+  }
 ];
 
 export type Theme = "light" | "dark" | "system";
@@ -62,6 +100,7 @@ type DashboardContextType = {
   selectedCustomer: Customer;
   setSelectedCustomer: (customer: Customer) => void;
   customers: Customer[];
+  addCustomer: (customer: Customer) => void;
   theme: Theme;
   setTheme: (theme: Theme) => void;
   lang: Language;
@@ -73,10 +112,14 @@ const DashboardContext = createContext<DashboardContextType | undefined>(undefin
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
   const [activeTab, setActiveTab] = useState("Home");
-  const [customers] = useState<Customer[]>(MOCK_CUSTOMERS);
+  const [customers, setCustomersState] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer>(MOCK_CUSTOMERS[0]);
   const [theme, setThemeState] = useState<Theme>("system");
   const [lang, setLangState] = useState<Language>("es");
+
+  const addCustomer = (customer: Customer) => {
+    setCustomersState((prev) => [...prev, customer]);
+  };
 
   // Load saved theme and language on mount
   useEffect(() => {
@@ -132,7 +175,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     <DashboardContext.Provider value={{
       activeTab, setActiveTab,
       selectedCustomer, setSelectedCustomer,
-      customers,
+      customers, addCustomer,
       theme, setTheme,
       lang, setLang, t
     }}>

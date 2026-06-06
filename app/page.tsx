@@ -70,7 +70,7 @@ function DashboardLayout() {
                 </div>
 
                 {/* Right Column: AI Panel */}
-                <div className="lg:col-span-4 min-h-[764px]">
+                <div className="lg:col-span-4 lg:h-[764px] min-h-[764px] flex flex-col">
                   <AIAgentPanel />
                 </div>
               </div>

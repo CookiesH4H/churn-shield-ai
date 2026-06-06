@@ -17,31 +17,22 @@ const renderFormattedText = (text: string) => {
   });
 };
 
+const isEmailDraft = (text: string): boolean => {
+  if (!text) return false;
+  const hasSubject = /(?:asunto|subject):/i.test(text);
+  const hasGreeting = /(?:estimado|estimada|estimados|estimadas|dear|para:|atentamente|saludos cordiales|un cordial saludo)/i.test(text);
+  return hasSubject || (hasGreeting && text.length > 80);
+};
+
 export default function AIAgentPanel() {
   const { selectedCustomer, t, lang } = useDashboard();
   
   const getInitialMessage = (): Message => {
-    const isHigh = selectedCustomer.churnProbability > 70;
-    const isMed = selectedCustomer.churnProbability > 40;
-    const riskLevelStr = isHigh 
-      ? t.aiAgent.riskLevelHigh 
-      : isMed 
-      ? t.aiAgent.riskLevelMedium 
-      : t.aiAgent.riskLevelLow;
-
-    const factorDescription = t.customerProfile.factors[selectedCustomer.primaryRiskFactor];
-    const initialText = t.aiAgent.initialMessage(selectedCustomer.name, riskLevelStr, selectedCustomer.churnProbability);
-    
-    // Add additional contextual explanation from the primary risk factor
-    const factorExplanation = selectedCustomer.primaryRiskFactor !== "none"
-      ? `\n\n[Diagnóstico] El factor principal de riesgo es: ${factorDescription}.`
-      : "";
-
     return {
       id: Date.now(), 
       sender: 'agent', 
-      text: initialText + factorExplanation,
-      action: true
+      text: t.aiAgent.welcomeMessage(selectedCustomer.name),
+      action: false
     };
   };
 
@@ -178,7 +169,7 @@ export default function AIAgentPanel() {
       </div>
 
       {/* Conversational AI Chat */}
-      <div className="bg-card border border-card-border rounded-2xl p-6 shadow-xl flex-1 flex flex-col relative overflow-hidden group transition-colors duration-300">
+      <div className="bg-card border border-card-border rounded-2xl p-6 shadow-xl flex-1 flex flex-col min-h-0 relative overflow-hidden group transition-colors duration-300">
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-brown/5 via-transparent to-brand-red/5 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
         
         {/* Glow borders using CSS variables */}
@@ -194,7 +185,7 @@ export default function AIAgentPanel() {
           </button>
         </div>
 
-        <div className="h-[350px] flex flex-col gap-4 relative z-10 overflow-y-auto scrollbar-custom mb-4 pr-2">
+        <div className="flex-1 min-h-0 flex flex-col gap-4 relative z-10 overflow-y-auto scrollbar-custom mb-4 pr-2">
           {messages.map(msg => (
             <div key={msg.id} className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
               {msg.sender === 'agent' && (
@@ -239,14 +230,16 @@ export default function AIAgentPanel() {
                           )}
                         </button>
                         
-                        <button
-                          onClick={() => handleSendEmail(msg.id, msg.text)}
-                          className="flex items-center gap-1.5 px-2 py-1 rounded bg-brand-red text-white hover:bg-brand-red-hover text-xs font-semibold transition-colors"
-                          title={`Enviar correo a ${selectedCustomer.email}`}
-                        >
-                          <Mail size={12} />
-                          <span>{emailingMessageId === msg.id ? "¡Copiado y Abriendo!" : "Enviar Correo"}</span>
-                        </button>
+                        {isEmailDraft(msg.text) && (
+                          <button
+                            onClick={() => handleSendEmail(msg.id, msg.text)}
+                            className="flex items-center gap-1.5 px-2 py-1 rounded bg-brand-red text-white hover:bg-brand-red-hover text-xs font-semibold transition-colors"
+                            title={`Enviar correo a ${selectedCustomer.email}`}
+                          >
+                            <Mail size={12} />
+                            <span>{emailingMessageId === msg.id ? "¡Copiado y Abriendo!" : "Enviar Correo"}</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   )

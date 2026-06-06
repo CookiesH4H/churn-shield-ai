@@ -87,6 +87,7 @@ export type TranslationKeys = {
     riskLevelMedium: string;
     riskLevelLow: string;
     initialMessage: (name: string, riskLevel: string, riskScore: number) => string;
+    welcomeMessage: (name: string) => string;
     recommendationAction: string;
     aiResponse: (name: string) => string;
     recOptionsAlert: string;
@@ -211,6 +212,8 @@ export const en: TranslationKeys = {
     riskLevelLow: "low",
     initialMessage: (name: string, riskLevel: string, riskScore: number) => 
       `${name}'s churn risk is ${riskLevel} (${riskScore}%). \nRecommended action: Offer a 20% discount on their next renewal and proactively schedule a customer success call to address concerns.`,
+    welcomeMessage: (name: string) => 
+      `Hello! I'm your AI Assistant. How can I help you with ${name} today?`,
     recommendationAction: "Action Button",
     aiResponse: (name: string) => 
       `I've noted that for ${name}. Would you like me to draft an email template with the proposal?`,
@@ -336,6 +339,8 @@ export const es: TranslationKeys = {
     riskLevelLow: "bajo",
     initialMessage: (name: string, riskLevel: string, riskScore: number) => 
       `El riesgo de abandono (churn) de ${name} es ${riskLevel} (${riskScore}%). \nAcción recomendada: Ofrecer un descuento del 20% en su próxima renovación y programar proactivamente una llamada de éxito del cliente para solucionar inquietudes.`,
+    welcomeMessage: (name: string) => 
+      `¡Hola! Soy tu Asistente de IA. ¿Cómo puedo ayudarte con ${name} hoy?`,
     recommendationAction: "Ejecutar",
     aiResponse: (name: string) => 
       `He tomado nota sobre eso para ${name}. ¿Te gustaría que redacte una plantilla de correo electrónico con la propuesta?`,

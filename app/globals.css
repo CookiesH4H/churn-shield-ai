@@ -84,3 +84,22 @@ body {
   transition-property: background-color, border-color, text-decoration-color, fill, stroke;
   transition-duration: 300ms;
 }
+
+/* Custom scrollbar utility */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: var(--card-border);
+  border-radius: 9999px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

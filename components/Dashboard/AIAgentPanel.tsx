@@ -31,7 +31,7 @@ export default function AIAgentPanel() {
     return {
       id: Date.now(), 
       sender: 'agent', 
-      text: t.aiAgent.welcomeMessage(selectedCustomer.name),
+      text: t.aiAgent.welcomeMessage,
       action: false
     };
   };

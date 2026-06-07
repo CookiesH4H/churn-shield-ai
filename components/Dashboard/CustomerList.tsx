@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 
 export default function CustomerList() {
   const { dashboardCustomers, selectedCustomer, setSelectedCustomer, fetchDashboardCustomers, t, dashboardPagination } = useDashboard();
+  const [localPage, setLocalPage] = useState(1);
+  
   // Fetch top 10 on mount
   useEffect(() => {
     fetchDashboardCustomers();
@@ -30,7 +32,7 @@ export default function CustomerList() {
             </tr>
           </thead>
           <tbody>
-            {dashboardCustomers.slice(0, 10).map((c, index) => {
+            {dashboardCustomers.slice((localPage - 1) * 5, localPage * 5).map((c, index) => {
               const isSelected = selectedCustomer?.id === c.id;
               const isHighRisk = c.riskLevel === "High" || c.riskLevel === "Critical";
               const isMediumRisk = c.riskLevel === "Medium";
@@ -79,6 +81,29 @@ export default function CustomerList() {
             })}
           </tbody>
         </table>
+      </div>
+
+      {/* Local Pagination Controls */}
+      <div className="mt-4 pt-4 border-t border-card-border/80 flex items-center justify-between">
+        <span className="text-xs text-text-muted">
+          Página {localPage} de 2
+        </span>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => setLocalPage(1)}
+            disabled={localPage === 1}
+            className="px-3 py-1.5 text-xs font-semibold rounded-md border border-card-border bg-hover/30 text-text-muted hover:text-text-bright hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Anterior
+          </button>
+          <button 
+            onClick={() => setLocalPage(2)}
+            disabled={localPage === 2}
+            className="px-3 py-1.5 text-xs font-semibold rounded-md border border-card-border bg-hover/30 text-text-muted hover:text-text-bright hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Siguiente
+          </button>
+        </div>
       </div>
     </div>
   );

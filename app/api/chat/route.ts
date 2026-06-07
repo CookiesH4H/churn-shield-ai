@@ -84,11 +84,31 @@ Keep your answers concise and directly related to the customer or the platform.`
         };
       });
 
+    // Determine thinking budget dynamically based on task type to optimize latency/tokens
+    const lastUserMessage = messages[messages.length - 1]?.text || "";
+    const queryLower = lastUserMessage.toLowerCase();
+    
+    // Simple tasks like drafting emails, greetings, or basic extraction don't require thinking
+    const isSimpleTask = queryLower.includes("correo") || 
+                         queryLower.includes("email") || 
+                         queryLower.includes("mail") ||
+                         queryLower.includes("redact") || 
+                         queryLower.includes("escribir") ||
+                         queryLower.includes("hola") ||
+                         queryLower.includes("buenos") ||
+                         queryLower.includes("saludos") ||
+                         queryLower.includes("gracias");
+
+    const thinkingConfig = isSimpleTask 
+      ? { thinkingBudget: 0 } 
+      : undefined; // Omit to use model's default thinking for reasoning
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
       contents: contents,
       config: {
         systemInstruction: systemInstruction,
+        ...(thinkingConfig ? { thinkingConfig } : {})
       }
     });
 

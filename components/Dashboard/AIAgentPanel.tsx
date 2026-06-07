@@ -140,30 +140,7 @@ export default function AIAgentPanel() {
 
   return (
     <div className="flex flex-col gap-6 h-full">
-      {/* AI Recommendations */}
-      <div className="bg-card border border-card-border rounded-2xl p-6 shadow-xl relative overflow-hidden transition-colors duration-300">
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-red/5 to-transparent pointer-events-none" />
-        
-        <div className="flex items-center justify-between mb-6 relative z-10">
-          <h3 className="text-lg font-semibold text-text-bright">{t.aiAgent.recTitle}</h3>
-        </div>
 
-        <div className="space-y-4 relative z-10">
-          {(t.aiAgent.recs[selectedCustomer.primaryRiskFactor] || t.aiAgent.recs.none).map((rec, index) => {
-            const buttonColor = index === 0
-              ? "bg-brand-red-muted/60 border-brand-red-border text-brand-red hover:bg-brand-red hover:text-white"
-              : "bg-brand-brown-muted/60 border-brand-brown-border text-brand-brown hover:bg-brand-brown hover:text-white";
-            return (
-              <RecommendationItem 
-                key={rec}
-                number={index + 1} 
-                title={rec} 
-                buttonColor={buttonColor}
-              />
-            );
-          })}
-        </div>
-      </div>
 
       {/* Conversational AI Chat */}
       <div className="bg-card border border-card-border rounded-2xl p-6 shadow-xl flex-1 flex flex-col min-h-0 relative overflow-hidden group transition-colors duration-300">

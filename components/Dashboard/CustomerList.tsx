@@ -21,33 +21,9 @@ export default function CustomerList() {
     <div className="bg-card border border-card-border rounded-2xl p-6 flex flex-col h-full shadow-xl transition-colors duration-300">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-text-bright">{t.customerList.title}</h3>
-        <button 
-          onClick={() => alert(t.customerList.filterAlert)}
-          className="text-text-muted hover:text-text-bright transition-colors"
-        >
-          <MoreHorizontal size={20} />
-        </button>
       </div>
 
-      <div className="flex gap-3 mb-6">
-        <div className="relative flex-1 group">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-brand-red transition-colors" />
-          <input 
-            type="text" 
-            placeholder={t.customerList.searchPlaceholder}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-hover/40 border border-card-border rounded-lg pl-9 pr-4 py-2 text-sm text-text-bright focus:outline-none focus:border-brand-red/50 transition-all placeholder:text-text-muted/50"
-          />
-        </div>
-        <button 
-          onClick={() => alert(t.customerList.filterAlert)}
-          className="flex items-center gap-2 px-3 py-2 bg-hover/40 border border-card-border rounded-lg text-sm font-medium text-text-muted hover:text-text-bright hover:bg-hover transition-all"
-        >
-          <Filter size={16} />
-          {t.customerList.filterLabel}
-        </button>
-      </div>
+
 
       <div className="flex-1 overflow-y-auto overflow-x-auto scrollbar-custom min-h-0">
         <table className="w-full text-left border-collapse">

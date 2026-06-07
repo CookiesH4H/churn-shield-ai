@@ -216,16 +216,15 @@ export default function UsersTab() {
               <tr className="border-b border-card-border bg-hover/20">
                 <th className="py-4 px-6 text-xs font-bold text-text-muted uppercase tracking-wider">{t.usersTab.colId}</th>
                 <th className="py-4 px-6 text-xs font-bold text-text-muted uppercase tracking-wider">{t.customerList.colName}</th>
-                <th className="py-4 px-6 text-xs font-bold text-text-muted uppercase tracking-wider">{t.usersTab.colChannel}</th>
+                <th className="py-4 px-6 text-xs font-bold text-text-muted uppercase tracking-wider">TAMAÑO</th>
                 <th className="py-4 px-6 text-xs font-bold text-text-muted uppercase tracking-wider">{t.usersTab.colJoined}</th>
-                <th className="py-4 px-6 text-xs font-bold text-text-muted uppercase tracking-wider">{t.customerList.colRisk}</th>
-                <th className="py-4 px-6 text-xs font-bold text-text-muted uppercase tracking-wider">{t.customerList.colStatus}</th>
+                <th className="py-4 px-6 text-xs font-bold text-text-muted uppercase tracking-wider">NIVEL RIESGO</th>
               </tr>
             </thead>
             <tbody>
               {currentCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-text-muted text-sm">
+                  <td colSpan={5} className="py-8 text-center text-text-muted text-sm">
                     No se encontraron clientes registrados con los filtros activos.
                   </td>
                 </tr>
@@ -249,11 +248,8 @@ export default function UsersTab() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-sm text-text-muted">{c.planTier}</td>
+                      <td className="py-4 px-6 text-sm text-text-muted">{c.customerSize || "Unknown"}</td>
                       <td className="py-4 px-6 text-sm text-text-muted">{c.signupDate}</td>
-                      <td className="py-4 px-6 text-sm font-bold" style={{ color: isHigh ? '#ef4444' : isMed ? '#f59e0b' : '#10b981' }}>
-                        {c.churnProbability}%
-                      </td>
                       <td className="py-4 px-6">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${
                           isHigh
@@ -262,11 +258,7 @@ export default function UsersTab() {
                             ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                             : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                         }`}>
-                          {isHigh 
-                            ? t.customerList.statusAtRisk 
-                            : isMed 
-                            ? t.customerList.statusNeutral 
-                            : t.customerList.statusStable}
+                          {c.riskLevel}
                         </span>
                       </td>
                     </tr>

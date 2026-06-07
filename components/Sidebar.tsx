@@ -113,31 +113,10 @@ export default function Sidebar() {
           isCollapsed={isCollapsed}
         />
         <NavItem
-          icon={<BarChart2 size={22} />}
-          label={t.sidebar.analytics}
-          active={activeTab === "Analytics"}
-          onClick={() => setActiveTab("Analytics")}
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
           icon={<Users size={22} />}
           label={t.sidebar.users}
           active={activeTab === "Users"}
           onClick={() => setActiveTab("Users")}
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          icon={<Megaphone size={22} />}
-          label={t.sidebar.campaigns}
-          active={activeTab === "Campaigns"}
-          onClick={() => setActiveTab("Campaigns")}
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          icon={<Settings size={22} />}
-          label={t.sidebar.settings}
-          active={activeTab === "Settings"}
-          onClick={() => setActiveTab("Settings")}
           isCollapsed={isCollapsed}
         />
       </nav>

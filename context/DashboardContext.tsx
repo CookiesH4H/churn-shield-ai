@@ -22,7 +22,10 @@ export type Customer = {
   npsScore: number;
   churnProbability: number;
   riskLevel: "Low" | "Medium" | "High" | "Critical";
-  primaryRiskFactor: "low_usage" | "payment_failures" | "support_tickets" | "none";
+  primaryRiskFactor: "low_usage" | "payment_failures" | "support_tickets" | "none" | string;
+  customerSize?: string;
+  realId?: string;
+  abandonmentReason?: string;
 };
 
 export const MOCK_CUSTOMERS: Customer[] = [
@@ -45,7 +48,10 @@ export const MOCK_CUSTOMERS: Customer[] = [
     npsScore: 4,
     churnProbability: 82,
     riskLevel: "High",
-    primaryRiskFactor: "support_tickets"
+    primaryRiskFactor: "support_tickets",
+    realId: "USR-98421",
+    abandonmentReason: "Falta de seguimiento en tickets",
+    customerSize: "Grande"
   },
   { 
     id: "USR-74829", 
@@ -66,7 +72,10 @@ export const MOCK_CUSTOMERS: Customer[] = [
     npsScore: 7,
     churnProbability: 48,
     riskLevel: "Medium",
-    primaryRiskFactor: "low_usage"
+    primaryRiskFactor: "low_usage",
+    realId: "USR-74829",
+    abandonmentReason: "Poco uso de la plataforma",
+    customerSize: "Mediano"
   },
   { 
     id: "USR-12948", 
@@ -87,7 +96,10 @@ export const MOCK_CUSTOMERS: Customer[] = [
     npsScore: 9,
     churnProbability: 12,
     riskLevel: "Low",
-    primaryRiskFactor: "none"
+    primaryRiskFactor: "none",
+    realId: "USR-12948",
+    abandonmentReason: "Ninguna",
+    customerSize: "Gigante"
   }
 ];
 
@@ -102,9 +114,11 @@ type DashboardContextType = {
   customers: Customer[]; // Dynamically points to dashboardCustomers or usersCustomers
   dashboardCustomers: Customer[];
   usersCustomers: Customer[];
-  riskStats: { low: number; medium: number; high: number };
+  riskStats: { low: number; medium: number; high: number; critical: number };
   pagination: { total: number; page: number; limit: number; totalPages: number };
-  fetchDashboardCustomers: (search?: string) => Promise<void>;
+  dashboardPagination: { page: number; totalPages: number };
+  reasonsStats: { reason: string, count: number }[];
+  fetchDashboardCustomers: (search?: string, page?: number) => Promise<void>;
   fetchUsersCustomers: (params: { page?: number; search?: string; risk?: string; channel?: string }) => Promise<void>;
   addCustomer: (customer: Customer) => void;
   theme: Theme;
@@ -122,23 +136,34 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [dashboardCustomers, setDashboardCustomers] = useState<Customer[]>([]);
   const [usersCustomers, setUsersCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer>(MOCK_CUSTOMERS[0]);
-  const [riskStats, setRiskStats] = useState({ low: 3, medium: 2, high: 1 });
+  const [riskStats, setRiskStats] = useState({ low: 3, medium: 2, high: 1, critical: 1 });
   const [pagination, setPagination] = useState({ total: 0, page: 1, limit: 30, totalPages: 0 });
+  const [dashboardPagination, setDashboardPagination] = useState({ page: 1, totalPages: 1 });
+  const [reasonsStats, setReasonsStats] = useState<{reason: string, count: number}[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchDashboardCustomers = async (search = "") => {
+  const fetchDashboardCustomers = async (search = "", page = 1) => {
     try {
-      const res = await fetch(`/api/customers?limit=5&search=${encodeURIComponent(search)}`);
+      const res = await fetch(`/api/customers?limit=5&page=${page}&search=${encodeURIComponent(search)}`);
       const data = await res.json();
       if (data && data.customers) {
         setDashboardCustomers(data.customers);
         setRiskStats(data.stats);
+        if (data.reasonsStats) {
+          setReasonsStats(data.reasonsStats);
+        }
         if (data.customers.length > 0) {
           // Keep the currently selected customer if it exists in the new list, or select the first one
           const stillExists = data.customers.find((c: Customer) => c.id === selectedCustomer.id);
           if (!stillExists) {
             setSelectedCustomer(data.customers[0]);
           }
+        }
+        if (data.pagination) {
+          setDashboardPagination({
+            page: data.pagination.page,
+            totalPages: data.pagination.totalPages
+          });
         }
       }
     } catch (err) {
@@ -241,21 +266,16 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <DashboardContext.Provider value={{
-      activeTab, setActiveTab,
-      selectedCustomer, setSelectedCustomer,
-      customers,
-      dashboardCustomers,
-      usersCustomers,
-      riskStats,
-      pagination,
-      fetchDashboardCustomers,
-      fetchUsersCustomers,
-      addCustomer,
-      theme, setTheme,
-      lang, setLang, t,
-      isLoading
-    }}>
+    <DashboardContext.Provider      value={{
+        activeTab, setActiveTab,
+        dashboardCustomers, usersCustomers,
+        customers: activeTab === "Users" ? usersCustomers : dashboardCustomers,
+        selectedCustomer, setSelectedCustomer,
+        riskStats, pagination, dashboardPagination, reasonsStats,
+        fetchDashboardCustomers, fetchUsersCustomers,
+        addCustomer, theme, setTheme,
+        lang, setLang, t, isLoading
+      }}>
       {children}
     </DashboardContext.Provider>
   );

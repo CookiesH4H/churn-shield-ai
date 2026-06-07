@@ -24,6 +24,7 @@ export type TranslationKeys = {
     low: string;
     medium: string;
     high: string;
+    critical: string;
     riskWord: string;
   };
   customerList: {
@@ -143,6 +144,7 @@ export const en: TranslationKeys = {
     low: "Low",
     medium: "Medium",
     high: "High",
+    critical: "Critical",
     riskWord: "Risk",
   },
   customerList: {
@@ -269,6 +271,7 @@ export const es: TranslationKeys = {
     low: "Bajo",
     medium: "Medio",
     high: "Alto",
+    critical: "Crítico",
     riskWord: "Riesgo",
   },
   customerList: {

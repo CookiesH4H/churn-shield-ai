@@ -53,7 +53,7 @@ function DashboardLayout() {
                     <div className="md:col-span-3 h-full">
                       <ChurnRiskOverview />
                     </div>
-                    <div className="md:col-span-5 h-full">
+                    <div className="md:col-span-5">
                       <CustomerList />
                     </div>
                   </div>
@@ -63,7 +63,7 @@ function DashboardLayout() {
                     <div className="md:col-span-5 h-full">
                       <ChurnTrends />
                     </div>
-                    <div className="md:col-span-3 h-full">
+                    <div className="md:col-span-3">
                       <CustomerProfile />
                     </div>
                   </div>

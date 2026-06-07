@@ -136,7 +136,7 @@ export const en: TranslationKeys = {
     profileAlert: "Opening User Profile Menu...",
   },
   page: {
-    title: "Churn Shield AI",
+    title: "Churn Dashboard",
     subtitle: "Prediction Platform",
   },
   riskOverview: {
@@ -263,7 +263,7 @@ export const es: TranslationKeys = {
     profileAlert: "Abriendo menú de perfil...",
   },
   page: {
-    title: "Churn Shield AI",
+    title: "Churn Dashboard",
     subtitle: "Plataforma de Predicción",
   },
   riskOverview: {

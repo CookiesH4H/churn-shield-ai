@@ -146,12 +146,6 @@ export default function AIAgentPanel() {
         
         <div className="flex items-center justify-between mb-6 relative z-10">
           <h3 className="text-lg font-semibold text-text-bright">{t.aiAgent.recTitle}</h3>
-          <button 
-            onClick={() => alert(t.aiAgent.recOptionsAlert)}
-            className="text-text-muted hover:text-text-bright transition-colors"
-          >
-            <MoreHorizontal size={20} />
-          </button>
         </div>
 
         <div className="space-y-4 relative z-10">
@@ -180,12 +174,6 @@ export default function AIAgentPanel() {
         
         <div className="flex items-center justify-between mb-6 relative z-10">
           <h3 className="text-lg font-semibold text-text-bright">{t.aiAgent.chatTitle}</h3>
-          <button 
-            onClick={() => alert(t.aiAgent.chatOptionsAlert)}
-            className="text-text-muted hover:text-text-bright transition-colors"
-          >
-            <MoreHorizontal size={20} />
-          </button>
         </div>
 
         <div 

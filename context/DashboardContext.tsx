@@ -119,7 +119,7 @@ type DashboardContextType = {
   dashboardPagination: { page: number; totalPages: number };
   reasonsStats: { reason: string, count: number }[];
   fetchDashboardCustomers: (search?: string, page?: number) => Promise<void>;
-  fetchUsersCustomers: (params: { page?: number; search?: string; risk?: string; channel?: string }) => Promise<void>;
+  fetchUsersCustomers: (params: { page?: number; search?: string; risk?: string; size?: string }) => Promise<void>;
   addCustomer: (customer: Customer) => void;
   theme: Theme;
   setTheme: (theme: Theme) => void;
@@ -171,14 +171,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchUsersCustomers = async ({ page = 1, search = "", risk = "All", channel = "All" }) => {
+  const fetchUsersCustomers = async ({ page = 1, search = "", risk = "All", size = "All" }) => {
     try {
       const query = new URLSearchParams({
         page: page.toString(),
         limit: "30",
         search,
         risk,
-        channel
+        size
       });
       const res = await fetch(`/api/customers?${query.toString()}`);
       const data = await res.json();
@@ -259,7 +259,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       <div className="flex items-center justify-center h-screen bg-background text-text-bright">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-sm font-semibold tracking-wide">Cargando Churn Shield AI...</span>
+          <span className="text-sm font-semibold tracking-wide">Cargando Churn Dashboard...</span>
         </div>
       </div>
     );

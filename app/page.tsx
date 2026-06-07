@@ -37,7 +37,7 @@ function DashboardLayout() {
             <div className="max-w-[1600px] mx-auto space-y-6">
               {/* Page Title */}
               <div className="flex items-center justify-between mb-8">
-                <h1 className="text-3xl font-bold text-text-bright tracking-tight">Churn Shield AI</h1>
+                <h1 className="text-3xl font-bold text-text-bright tracking-tight">Churn Dashboard</h1>
                 <div className="hidden lg:flex items-center gap-4 text-sm text-text-muted">
                   <span>Plataforma de Predicción</span>
                   <span className="text-text-bright font-medium bg-hover px-3 py-1 rounded-md border border-card-border">Arca Continental</span>

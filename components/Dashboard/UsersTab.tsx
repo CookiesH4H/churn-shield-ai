@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, Filter, Plus, X, UserPlus, CheckCircle } from "lucide-react";
+import { Search, Filter, Plus, X, UserPlus, CheckCircle, Download } from "lucide-react";
 import { useDashboard, Customer } from "@/context/DashboardContext";
 
 export default function UsersTab() {
@@ -10,7 +10,7 @@ export default function UsersTab() {
   // State for search and filters
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRisk, setFilterRisk] = useState("All");
-  const [filterChannel, setFilterChannel] = useState("All");
+  const [filterSize, setFilterSize] = useState("All");
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,7 +18,7 @@ export default function UsersTab() {
   // Reset page to 1 when filters or search query change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, filterRisk, filterChannel]);
+  }, [searchQuery, filterRisk, filterSize]);
 
   // Fetch users from backend on page/filter change with debounce
   useEffect(() => {
@@ -27,12 +27,12 @@ export default function UsersTab() {
         page: currentPage,
         search: searchQuery,
         risk: filterRisk,
-        channel: filterChannel
+        size: filterSize
       });
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [currentPage, searchQuery, filterRisk, filterChannel]);
+  }, [currentPage, searchQuery, filterRisk, filterSize]);
   
   // State for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -138,6 +138,16 @@ export default function UsersTab() {
     setActiveTab("Home"); // Redirect to home so they can see this customer's details and chatbot recommendations!
   };
 
+  const handleExportCSV = () => {
+    const query = new URLSearchParams({
+      search: searchQuery,
+      risk: filterRisk,
+      size: filterSize,
+      export: "true"
+    });
+    window.location.href = `/api/customers?${query.toString()}`;
+  };
+
   return (
     <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
       {/* Toast Notification */}
@@ -154,13 +164,7 @@ export default function UsersTab() {
           <h1 className="text-3xl font-bold text-text-bright tracking-tight">{t.usersTab.title}</h1>
           <p className="text-text-muted text-sm mt-1">{t.usersTab.subtitle}</p>
         </div>
-        <button
-          onClick={handleRegisterClick}
-          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-red text-white hover:bg-brand-red-hover hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-brand-red/25 font-semibold text-sm self-start sm:self-auto"
-        >
-          <Plus size={18} />
-          {t.usersTab.registerBtn}
-        </button>
+
       </div>
 
       {/* Barra de Filtros y Búsqueda */}
@@ -177,34 +181,47 @@ export default function UsersTab() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-          {/* Canal Filter */}
+          {/* Tamaño Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-text-muted whitespace-nowrap">Canal:</span>
+            <span className="text-xs text-text-muted whitespace-nowrap">Tamaño:</span>
             <select
-              value={filterChannel}
-              onChange={(e) => { setFilterChannel(e.target.value); setCurrentPage(1); }}
+              value={filterSize}
+              onChange={(e) => { setFilterSize(e.target.value); setCurrentPage(1); }}
               className="bg-hover/40 border border-card-border rounded-xl px-3 py-2 text-xs text-text-bright focus:outline-none focus:border-brand-red/50 w-full sm:w-auto"
             >
-              <option value="All" className="bg-[#121620]">{t.usersTab.filterAllChannels}</option>
-              <option value="Tradicional" className="bg-[#121620]">Canal Tradicional</option>
-              <option value="Moderno" className="bg-[#121620]">Canal Moderno</option>
+              <option value="All">Todos los Tamaños</option>
+              <option value="Gigante">Gigante</option>
+              <option value="Grande">Grande</option>
+              <option value="Mediano">Mediano</option>
+              <option value="Pequeño">Pequeño</option>
+              <option value="Mini">Mini</option>
             </select>
           </div>
 
           {/* Riesgo Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-text-muted whitespace-nowrap">Riesgo:</span>
+            <span className="text-xs text-text-muted whitespace-nowrap">Nivel Riesgo:</span>
             <select
               value={filterRisk}
               onChange={(e) => { setFilterRisk(e.target.value); setCurrentPage(1); }}
               className="bg-hover/40 border border-card-border rounded-xl px-3 py-2 text-xs text-text-bright focus:outline-none focus:border-brand-red/50 w-full sm:w-auto"
             >
-              <option value="All" className="bg-[#121620]">{t.usersTab.filterAllRisks}</option>
-              <option value="Low" className="bg-[#121620]">Bajo</option>
-              <option value="Medium" className="bg-[#121620]">Medio</option>
-              <option value="High" className="bg-[#121620]">Alto</option>
+              <option value="All">{t.usersTab.filterAllRisks}</option>
+              <option value="Low">Bajo</option>
+              <option value="Medium">Medio</option>
+              <option value="High">Alto</option>
+              <option value="Critical">Crítico</option>
             </select>
           </div>
+
+          {/* Export Button */}
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-brand-red text-white text-xs font-semibold rounded-xl hover:bg-brand-red-hover transition-colors shadow-lg shadow-brand-red/20 ml-2"
+          >
+            <Download size={14} />
+            Descargar CSV
+          </button>
         </div>
       </div>
 
@@ -232,6 +249,14 @@ export default function UsersTab() {
                 currentCustomers.map((c) => {
                   const isHigh = c.riskLevel === "High" || c.riskLevel === "Critical";
                   const isMed = c.riskLevel === "Medium";
+                  
+                  const translatedRisk = {
+                    "Low": "Bajo",
+                    "Medium": "Medio",
+                    "High": "Alto",
+                    "Critical": "Crítico"
+                  }[c.riskLevel] || c.riskLevel;
+
                   return (
                     <tr
                       key={c.id}
@@ -258,7 +283,7 @@ export default function UsersTab() {
                             ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                             : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                         }`}>
-                          {c.riskLevel}
+                          {translatedRisk}
                         </span>
                       </td>
                     </tr>

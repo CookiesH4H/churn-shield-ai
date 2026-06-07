@@ -64,6 +64,14 @@ export default function CustomerList() {
               const isSelected = selectedCustomer?.id === c.id;
               const isHighRisk = c.riskLevel === "High" || c.riskLevel === "Critical";
               const isMediumRisk = c.riskLevel === "Medium";
+              
+              const translatedRisk = {
+                "Low": "Bajo",
+                "Medium": "Medio",
+                "High": "Alto",
+                "Critical": "Crítico"
+              }[c.riskLevel] || c.riskLevel;
+
               return (
                 <tr 
                   key={c.id} 
@@ -90,7 +98,7 @@ export default function CustomerList() {
                         ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                         : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                     }`}>
-                      {c.riskLevel}
+                      {translatedRisk}
                     </span>
                   </td>
                   <td className="py-3 pl-4 text-sm text-text-muted font-medium">

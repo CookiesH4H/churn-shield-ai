@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Churn Shield AI - Dashboard",
+  title: "Arca Predicte",
   description: "AI-powered Churn Prediction and Action Dashboard",
 };
 

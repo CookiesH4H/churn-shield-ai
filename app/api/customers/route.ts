@@ -11,7 +11,8 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get("limit") || "30", 10);
     const search = searchParams.get("search") || "";
     const risk = searchParams.get("risk") || "All";
-    const channel = searchParams.get("channel") || "All";
+    const size = searchParams.get("size") || "All";
+    const isExport = searchParams.get("export") === "true";
     const sortField = searchParams.get("sortField") || "churnRiskScore";
     const sortOrder = searchParams.get("sortOrder") || "desc"; // Sort high-risk first by default
 
@@ -19,11 +20,17 @@ export async function GET(request: Request) {
     const query: any = {};
     
     if (search) {
-      query.$or = [
+      const searchNumber = search.replace(/\D/g, ''); // Extract only digits to match raw IDs
+      const orClauses: any[] = [
         { name: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
-        { customerId: { $regex: search, $options: "i" } }
+        { customerId: { $regex: search, $options: "i" } },
+        { territory: { $regex: search, $options: "i" } }
       ];
+      if (searchNumber) {
+        orClauses.push({ customerId: { $regex: searchNumber, $options: "i" } });
+      }
+      query.$or = orClauses;
     }
     
     if (risk && risk !== "All") {
@@ -35,14 +42,8 @@ export async function GET(request: Request) {
       else query.riskLevel = risk;
     }
     
-    if (channel && channel !== "All") {
-      if (channel === "Tradicional" || channel === "Canal Tradicional") {
-        query.planTier = "Canal Tradicional";
-      } else if (channel === "Moderno" || channel === "Canal Moderno") {
-        query.planTier = "Canal Moderno";
-      } else {
-        query.planTier = channel;
-      }
+    if (size && size !== "All") {
+      query["ml_scoring.rtm_customer_size_d"] = { $regex: size, $options: "i" };
     }
 
     // Determine sorting
@@ -82,6 +83,76 @@ export async function GET(request: Request) {
     const countResult = await Customer.aggregate(countPipeline);
     const totalCount = countResult.length > 0 ? countResult[0].total : 0;
     const totalPages = Math.ceil(totalCount / limit);
+
+    if (isExport) {
+      const exportPipeline = [
+        ...pipeline,
+        { $sort: sort }
+      ];
+      const exportDocs = await Customer.aggregate(exportPipeline);
+      
+      const csvHeaders = [
+        "ID Cliente", 
+        "Email", 
+        "Territorio", 
+        "Canal/Tier", 
+        "Tamaño", 
+        "Nivel Riesgo", 
+        "Probabilidad Abandono (%)", 
+        "Razón Principal"
+      ];
+      
+      const csvRows = exportDocs.map((doc: any) => {
+        const ml = doc.ml_scoring || {};
+        
+        const mapRiskLevel = (nivel: string) => {
+          if (!nivel) return doc.riskLevel || "Low";
+          switch(nivel.toLowerCase()) {
+            case 'crítico': return 'Critical';
+            case 'alto': return 'High';
+            case 'medio': return 'Medium';
+            case 'bajo': return 'Low';
+            default: return doc.riskLevel || "Low";
+          }
+        };
+
+        const regionMap: Record<string, string> = {
+          "NUEVO LEON": "NLE", "GUADALAJARA": "GDL", "MONTERREY": "MTY",
+          "CIUDAD DE MEXICO": "CDMX", "JALISCO": "JAL", "SINALOA": "SIN", "CHIHUAHUA": "CHH"
+        };
+        const rawTerritory = (doc.territory || "REG").toUpperCase();
+        const territoryPrefix = regionMap[rawTerritory] || rawTerritory.substring(0, 3);
+        const idSuffix = (doc.customerId || "").substring((doc.customerId || "").length - 3);
+        const displayId = `${territoryPrefix}${idSuffix}`;
+
+        const email = doc.email || `contacto@${displayId.toLowerCase()}.com`;
+        const tier = doc.planTier || "Canal Tradicional";
+        const size = ml.rtm_customer_size_d || "Unknown";
+        const riskLevel = mapRiskLevel(ml.nivel_riesgo);
+        const prob = ml.score_riesgo ?? (doc.churnRiskScore !== undefined ? Math.round(doc.churnRiskScore) : 10);
+        const reason = ml.razon_abandono ?? "Sin razón registrada";
+
+        return [
+          displayId,
+          email,
+          rawTerritory,
+          tier,
+          size,
+          riskLevel,
+          prob,
+          `"${reason}"`
+        ].join(",");
+      });
+
+      const csvString = [csvHeaders.join(","), ...csvRows].join("\n");
+      
+      return new NextResponse("\uFEFF" + csvString, {
+        headers: {
+          "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": 'attachment; filename="clientes_filtrados.csv"'
+        }
+      });
+    }
 
     // Fetch paginated customers
     const dataPipeline = [

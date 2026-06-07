@@ -6,21 +6,15 @@ import { useState, useEffect } from "react";
 
 export default function CustomerList() {
   const { dashboardCustomers, selectedCustomer, setSelectedCustomer, fetchDashboardCustomers, t, dashboardPagination } = useDashboard();
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Debounce the backend query on search input change
+  // Fetch top 10 on mount
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchDashboardCustomers(searchQuery);
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
+    fetchDashboardCustomers();
+  }, []);
 
   return (
     <div className="bg-card border border-card-border rounded-2xl p-6 flex flex-col h-full shadow-xl transition-colors duration-300">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-text-bright">{t.customerList.title}</h3>
+        <h3 className="text-lg font-semibold text-text-bright">Top 10 Riesgo de Abandono</h3>
       </div>
 
 
@@ -36,7 +30,7 @@ export default function CustomerList() {
             </tr>
           </thead>
           <tbody>
-            {dashboardCustomers.map((c, index) => {
+            {dashboardCustomers.slice(0, 10).map((c, index) => {
               const isSelected = selectedCustomer?.id === c.id;
               const isHighRisk = c.riskLevel === "High" || c.riskLevel === "Critical";
               const isMediumRisk = c.riskLevel === "Medium";
@@ -86,31 +80,6 @@ export default function CustomerList() {
           </tbody>
         </table>
       </div>
-
-      {/* Pagination Controls */}
-      {dashboardPagination && dashboardPagination.totalPages > 1 && (
-        <div className="mt-4 pt-4 border-t border-card-border/80 flex items-center justify-between">
-          <span className="text-xs text-text-muted">
-            Página {dashboardPagination.page} de {dashboardPagination.totalPages}
-          </span>
-          <div className="flex gap-2">
-            <button 
-              onClick={() => fetchDashboardCustomers(searchQuery, dashboardPagination.page - 1)}
-              disabled={dashboardPagination.page <= 1}
-              className="px-3 py-1.5 text-xs font-semibold rounded-md border border-card-border bg-hover/30 text-text-muted hover:text-text-bright hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Anterior
-            </button>
-            <button 
-              onClick={() => fetchDashboardCustomers(searchQuery, dashboardPagination.page + 1)}
-              disabled={dashboardPagination.page >= dashboardPagination.totalPages}
-              className="px-3 py-1.5 text-xs font-semibold rounded-md border border-card-border bg-hover/30 text-text-muted hover:text-text-bright hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Siguiente
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

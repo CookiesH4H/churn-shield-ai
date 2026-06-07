@@ -41,11 +41,14 @@ export default function AIAgentPanel() {
   const [isTyping, setIsTyping] = useState(false);
   const [copiedMessageId, setCopiedMessageId] = useState<number | null>(null);
   const [emailingMessageId, setEmailingMessageId] = useState<number | null>(null);
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to the bottom of the chat when new messages are added or when typing state changes
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesContainerRef.current?.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior: "smooth"
+    });
   }, [messages, isTyping]);
 
   const handleCopyMessage = (id: number, text: string) => {
@@ -185,7 +188,10 @@ export default function AIAgentPanel() {
           </button>
         </div>
 
-        <div className="flex-1 min-h-0 flex flex-col gap-4 relative z-10 overflow-y-auto scrollbar-custom mb-4 pr-2">
+        <div 
+          ref={messagesContainerRef}
+          className="flex-1 min-h-0 flex flex-col gap-4 relative z-10 overflow-y-auto scrollbar-custom mb-4 pr-2"
+        >
           {messages.map(msg => (
             <div key={msg.id} className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
               {msg.sender === 'agent' && (
@@ -260,7 +266,7 @@ export default function AIAgentPanel() {
             </div>
           )}
           
-          <div ref={chatEndRef} />
+
         </div>
 
         <div className="mt-auto relative z-10">

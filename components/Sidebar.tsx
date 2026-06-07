@@ -87,9 +87,11 @@ export default function Sidebar() {
           isCollapsed ? "px-0 justify-center" : "px-6 justify-start"
         }`}
       >
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-brown to-brand-red flex items-center justify-center font-bold text-xl text-white shadow-lg flex-shrink-0">
-          AC
-        </div>
+        <img 
+          src="/logo.png" 
+          alt="Arca Logo" 
+          className="w-10 h-10 object-contain flex-shrink-0 drop-shadow-md" 
+        />
         {!isCollapsed && (
           <span className="hidden lg:block text-xl font-bold tracking-wide text-brand-red whitespace-nowrap overflow-hidden text-ellipsis">
             Arca <span className="text-text-bright font-semibold">Predicte</span>

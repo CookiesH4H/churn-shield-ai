@@ -1,16 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Filter, Plus, X, UserPlus, CheckCircle } from "lucide-react";
 import { useDashboard, Customer } from "@/context/DashboardContext";
 
 export default function UsersTab() {
-  const { customers, addCustomer, setSelectedCustomer, setActiveTab, t } = useDashboard();
+  const { usersCustomers, pagination, fetchUsersCustomers, addCustomer, setSelectedCustomer, setActiveTab, t } = useDashboard();
   
   // State for search and filters
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRisk, setFilterRisk] = useState("All");
   const [filterChannel, setFilterChannel] = useState("All");
+  
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page to 1 when filters or search query change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterRisk, filterChannel]);
+
+  // Fetch users from backend on page/filter change with debounce
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchUsersCustomers({
+        page: currentPage,
+        search: searchQuery,
+        risk: filterRisk,
+        channel: filterChannel
+      });
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [currentPage, searchQuery, filterRisk, filterChannel]);
   
   // State for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,22 +47,32 @@ export default function UsersTab() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Filtering logic
-  const filteredCustomers = customers.filter(c => {
-    const matchesSearch = 
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.id.toLowerCase().includes(searchQuery.toLowerCase());
-      
-    const matchesRisk = filterRisk === "All" || c.riskLevel === filterRisk;
-    
-    const matchesChannel = 
-      filterChannel === "All" || 
-      (filterChannel === "Tradicional" && c.planTier === "Canal Tradicional") ||
-      (filterChannel === "Moderno" && c.planTier === "Canal Moderno");
-      
-    return matchesSearch && matchesRisk && matchesChannel;
-  });
+  const totalPages = pagination.totalPages;
+  const currentCustomers = usersCustomers;
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      if (currentPage > 4) {
+        pages.push("...");
+      }
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      if (currentPage < totalPages - 3) {
+        pages.push("...");
+      }
+      pages.push(totalPages);
+    }
+    return pages;
+  };
 
   const handleRegisterClick = () => {
     setIsModalOpen(true);
@@ -139,7 +171,7 @@ export default function UsersTab() {
             type="text"
             placeholder={t.customerList.searchPlaceholder}
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
             className="w-full bg-hover/40 border border-card-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-text-bright focus:outline-none focus:border-brand-red/50 transition-all placeholder:text-text-muted/50"
           />
         </div>
@@ -150,7 +182,7 @@ export default function UsersTab() {
             <span className="text-xs text-text-muted whitespace-nowrap">Canal:</span>
             <select
               value={filterChannel}
-              onChange={(e) => setFilterChannel(e.target.value)}
+              onChange={(e) => { setFilterChannel(e.target.value); setCurrentPage(1); }}
               className="bg-hover/40 border border-card-border rounded-xl px-3 py-2 text-xs text-text-bright focus:outline-none focus:border-brand-red/50 w-full sm:w-auto"
             >
               <option value="All" className="bg-[#121620]">{t.usersTab.filterAllChannels}</option>
@@ -164,7 +196,7 @@ export default function UsersTab() {
             <span className="text-xs text-text-muted whitespace-nowrap">Riesgo:</span>
             <select
               value={filterRisk}
-              onChange={(e) => setFilterRisk(e.target.value)}
+              onChange={(e) => { setFilterRisk(e.target.value); setCurrentPage(1); }}
               className="bg-hover/40 border border-card-border rounded-xl px-3 py-2 text-xs text-text-bright focus:outline-none focus:border-brand-red/50 w-full sm:w-auto"
             >
               <option value="All" className="bg-[#121620]">{t.usersTab.filterAllRisks}</option>
@@ -191,14 +223,14 @@ export default function UsersTab() {
               </tr>
             </thead>
             <tbody>
-              {filteredCustomers.length === 0 ? (
+              {currentCustomers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-text-muted text-sm">
                     No se encontraron clientes registrados con los filtros activos.
                   </td>
                 </tr>
               ) : (
-                filteredCustomers.map((c) => {
+                currentCustomers.map((c) => {
                   const isHigh = c.riskLevel === "High" || c.riskLevel === "Critical";
                   const isMed = c.riskLevel === "Medium";
                   return (
@@ -244,6 +276,60 @@ export default function UsersTab() {
             </tbody>
           </table>
         </div>
+        
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-card-border/50 bg-hover/5 p-5 transition-colors duration-300">
+            <div className="text-xs text-text-muted">
+              Mostrando <span className="font-semibold text-text-bright">{currentCustomers.length}</span> de{" "}
+              <span className="font-semibold text-text-bright">{pagination.total}</span> clientes
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 rounded-xl border border-card-border text-xs font-semibold text-text-muted hover:text-text-bright hover:bg-hover disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+              >
+                Anterior
+              </button>
+              
+              <div className="flex items-center gap-1.5">
+                {getPageNumbers().map((p, idx) => {
+                  if (p === "...") {
+                    return (
+                      <span key={`dots-${idx}`} className="px-2 text-text-muted text-xs">
+                        ...
+                      </span>
+                    );
+                  }
+                  const isCurrent = p === currentPage;
+                  return (
+                    <button
+                      key={`page-${p}`}
+                      onClick={() => setCurrentPage(p as number)}
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-semibold border transition-all ${
+                        isCurrent
+                          ? "bg-brand-red border-brand-red text-white shadow-lg shadow-brand-red/25"
+                          : "border-card-border text-text-muted hover:text-text-bright hover:bg-hover"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 rounded-xl border border-card-border text-xs font-semibold text-text-muted hover:text-text-bright hover:bg-hover disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Modal Registrar Cliente */}

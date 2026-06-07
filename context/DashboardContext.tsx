@@ -99,39 +99,94 @@ type DashboardContextType = {
   setActiveTab: (tab: string) => void;
   selectedCustomer: Customer;
   setSelectedCustomer: (customer: Customer) => void;
-  customers: Customer[];
+  customers: Customer[]; // Dynamically points to dashboardCustomers or usersCustomers
+  dashboardCustomers: Customer[];
+  usersCustomers: Customer[];
+  riskStats: { low: number; medium: number; high: number };
+  pagination: { total: number; page: number; limit: number; totalPages: number };
+  fetchDashboardCustomers: (search?: string) => Promise<void>;
+  fetchUsersCustomers: (params: { page?: number; search?: string; risk?: string; channel?: string }) => Promise<void>;
   addCustomer: (customer: Customer) => void;
   theme: Theme;
   setTheme: (theme: Theme) => void;
   lang: Language;
   setLang: (lang: Language) => void;
   t: TranslationKeys;
+  isLoading: boolean;
 };
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
   const [activeTab, setActiveTab] = useState("Home");
-  const [customers, setCustomersState] = useState<Customer[]>(MOCK_CUSTOMERS);
+  const [dashboardCustomers, setDashboardCustomers] = useState<Customer[]>([]);
+  const [usersCustomers, setUsersCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer>(MOCK_CUSTOMERS[0]);
+  const [riskStats, setRiskStats] = useState({ low: 3, medium: 2, high: 1 });
+  const [pagination, setPagination] = useState({ total: 0, page: 1, limit: 30, totalPages: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchDashboardCustomers = async (search = "") => {
+    try {
+      const res = await fetch(`/api/customers?limit=5&search=${encodeURIComponent(search)}`);
+      const data = await res.json();
+      if (data && data.customers) {
+        setDashboardCustomers(data.customers);
+        setRiskStats(data.stats);
+        if (data.customers.length > 0) {
+          // Keep the currently selected customer if it exists in the new list, or select the first one
+          const stillExists = data.customers.find((c: Customer) => c.id === selectedCustomer.id);
+          if (!stillExists) {
+            setSelectedCustomer(data.customers[0]);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch dashboard customers", err);
+    }
+  };
+
+  const fetchUsersCustomers = async ({ page = 1, search = "", risk = "All", channel = "All" }) => {
+    try {
+      const query = new URLSearchParams({
+        page: page.toString(),
+        limit: "30",
+        search,
+        risk,
+        channel
+      });
+      const res = await fetch(`/api/customers?${query.toString()}`);
+      const data = await res.json();
+      if (data && data.customers) {
+        setUsersCustomers(data.customers);
+        setPagination(data.pagination);
+        setRiskStats(data.stats);
+      }
+    } catch (err) {
+      console.error("Failed to fetch users customers", err);
+    }
+  };
+
+  // Perform initial fetches on mount
+  useEffect(() => {
+    const init = async () => {
+      setIsLoading(true);
+      await Promise.all([
+        fetchDashboardCustomers(),
+        fetchUsersCustomers({ page: 1 })
+      ]);
+      setIsLoading(false);
+    };
+    init();
+  }, []);
+
   const [theme, setThemeState] = useState<Theme>("system");
   const [lang, setLangState] = useState<Language>("es");
 
   const addCustomer = (customer: Customer) => {
-    setCustomersState((prev) => [...prev, customer]);
+    setUsersCustomers((prev) => [customer, ...prev]);
+    setDashboardCustomers((prev) => [customer, ...prev.slice(0, 4)]);
   };
-
-  // Load saved theme and language on mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as Theme;
-    if (savedTheme) {
-      setThemeState(savedTheme);
-    }
-    const savedLang = localStorage.getItem("lang") as Language;
-    if (savedLang) {
-      setLangState(savedLang);
-    }
-  }, []);
 
   // Sync theme with HTML class and handle system preference changes
   useEffect(() => {
@@ -171,13 +226,35 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   // Get active translation keys
   const t = lang === "es" ? es : en;
 
+  // Dynamically map active customers for components referencing 'customers'
+  const customers = activeTab === "Home" ? dashboardCustomers : usersCustomers;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background text-text-bright">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm font-semibold tracking-wide">Cargando Churn Shield AI...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <DashboardContext.Provider value={{
       activeTab, setActiveTab,
       selectedCustomer, setSelectedCustomer,
-      customers, addCustomer,
+      customers,
+      dashboardCustomers,
+      usersCustomers,
+      riskStats,
+      pagination,
+      fetchDashboardCustomers,
+      fetchUsersCustomers,
+      addCustomer,
       theme, setTheme,
-      lang, setLang, t
+      lang, setLang, t,
+      isLoading
     }}>
       {children}
     </DashboardContext.Provider>

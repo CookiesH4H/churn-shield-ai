@@ -4,22 +4,11 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { useDashboard } from "@/context/DashboardContext";
 
 export default function ChurnRiskOverview() {
-  const { customers, t } = useDashboard();
+  const { riskStats, t } = useDashboard();
 
-  const counts = customers.reduce(
-    (acc, c) => {
-      const rl = c.riskLevel;
-      if (rl === "Low") acc.low += 1;
-      else if (rl === "Medium") acc.medium += 1;
-      else acc.high += 1; // High / Critical
-      return acc;
-    },
-    { low: 0, medium: 0, high: 0 }
-  );
-
-  const total = customers.length || 1;
-  const lowPct = Math.round((counts.low / total) * 100);
-  const mediumPct = Math.round((counts.medium / total) * 100);
+  const total = riskStats.low + riskStats.medium + riskStats.high || 1;
+  const lowPct = Math.round((riskStats.low / total) * 100);
+  const mediumPct = Math.round((riskStats.medium / total) * 100);
   const highPct = 100 - lowPct - mediumPct;
 
   const data = [

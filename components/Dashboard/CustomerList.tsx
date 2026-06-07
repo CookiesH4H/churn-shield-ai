@@ -2,16 +2,21 @@
 
 import { Search, Filter, MoreHorizontal } from "lucide-react";
 import { useDashboard } from "@/context/DashboardContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function CustomerList() {
-  const { customers, selectedCustomer, setSelectedCustomer, t } = useDashboard();
+  const { dashboardCustomers, selectedCustomer, setSelectedCustomer, fetchDashboardCustomers, t } = useDashboard();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredCustomers = customers.filter(c => 
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    c.planTier.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Debounce the backend query on search input change
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchDashboardCustomers(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
   return (
     <div className="bg-card border border-card-border rounded-2xl p-6 flex flex-col h-full shadow-xl transition-colors duration-300">
       <div className="flex items-center justify-between mb-6">
@@ -44,7 +49,7 @@ export default function CustomerList() {
         </button>
       </div>
 
-      <div className="flex-1 overflow-x-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-auto scrollbar-custom min-h-0">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-card-border/80">
@@ -55,8 +60,8 @@ export default function CustomerList() {
             </tr>
           </thead>
           <tbody>
-            {filteredCustomers.map((c) => {
-              const isSelected = selectedCustomer.id === c.id;
+            {dashboardCustomers.map((c) => {
+              const isSelected = selectedCustomer?.id === c.id;
               const isHighRisk = c.riskLevel === "High" || c.riskLevel === "Critical";
               const isMediumRisk = c.riskLevel === "Medium";
               return (

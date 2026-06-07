@@ -45,32 +45,32 @@ function DashboardLayout() {
               </div>
 
               {/* Main Grid Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-12">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-12 items-stretch">
                 {/* Left/Center Column Group (8 cols wide) */}
                 <div className="lg:col-span-8 flex flex-col gap-6">
                   {/* Row 1: Risk Overview & Customer List */}
-                  <div className="grid grid-cols-1 md:grid-cols-8 gap-6">
-                    <div className="md:col-span-3 min-h-[340px]">
+                  <div className="grid grid-cols-1 md:grid-cols-8 gap-6 h-auto md:h-[350px]">
+                    <div className="md:col-span-3 h-full">
                       <ChurnRiskOverview />
                     </div>
-                    <div className="md:col-span-5 min-h-[340px]">
+                    <div className="md:col-span-5 h-full">
                       <CustomerList />
                     </div>
                   </div>
 
                   {/* Row 2: Churn Trends & Customer Profile */}
-                  <div className="grid grid-cols-1 md:grid-cols-8 gap-6">
-                    <div className="md:col-span-5 min-h-[400px]">
+                  <div className="grid grid-cols-1 md:grid-cols-8 gap-6 h-auto md:h-[400px]">
+                    <div className="md:col-span-5 h-full">
                       <ChurnTrends />
                     </div>
-                    <div className="md:col-span-3 min-h-[400px]">
+                    <div className="md:col-span-3 h-full">
                       <CustomerProfile />
                     </div>
                   </div>
                 </div>
 
                 {/* Right Column: AI Panel */}
-                <div className="lg:col-span-4 lg:h-[764px] min-h-[764px] flex flex-col">
+                <div className="lg:col-span-4 h-full">
                   <AIAgentPanel />
                 </div>
               </div>

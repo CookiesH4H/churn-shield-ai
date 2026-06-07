@@ -54,7 +54,7 @@ export default function CustomerProfile() {
       </div>
 
       {/* Grid of metrics */}
-      <div className="grid grid-cols-1 gap-4 mb-6 flex-1 overflow-y-auto max-h-[320px] pr-1">
+      <div className="grid grid-cols-1 gap-4 mb-6 flex-1 overflow-y-auto pr-1 scrollbar-custom min-h-0">
         {/* Interaction & Usage */}
         <div className="border border-card-border/60 bg-hover/10 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-text-bright uppercase tracking-wider">

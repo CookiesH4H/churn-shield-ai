@@ -1,39 +1,31 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface IMonthlyHistory {
-  calmonth: string;
-  totalCoolers: number;
-  totalDoors: number;
-  totalTransactions: number;
-  totalBoxesSold: number;
-  target: number;
-}
-
 export interface ICustomer extends Document {
   customerId: string;
-  territory: string;
-  subchannel: string;
-  size: string;
-  history: IMonthlyHistory[];
-  churnRiskScore: number;
+  name?: string;
+  email?: string;
+  planTier?: string;
+  signupDate?: string;
+  avatar?: string;
+  lastLogin?: string;
+  daysInactive?: number;
+  sessionsLast30d?: number;
+  coreFeatureUsage?: number;
+  timeSpentWeekly?: number;
+  mrr?: number;
+  billingCycle?: string;
+  paymentFailures?: number;
+  openTickets?: number;
+  npsScore?: number;
+  churnRiskScore?: number;
+  riskLevel?: string;
+  primaryRiskFactor?: string;
+  accionComercial?: string;
+  churnReason?: string;
 }
-
-const MonthlyHistorySchema: Schema = new Schema({
-  calmonth: { type: String },
-  totalCoolers: { type: Number, default: 0 },
-  totalDoors: { type: Number, default: 0 },
-  totalTransactions: { type: Number, default: 0 },
-  totalBoxesSold: { type: Number, default: 0 },
-  target: { type: Number, default: 0 },
-});
 
 const CustomerSchema: Schema = new Schema({
   customerId: { type: String, required: true, unique: true },
-  territory: { type: String },
-  subchannel: { type: String },
-  size: { type: String },
-  history: [MonthlyHistorySchema],
-  churnRiskScore: { type: Number, default: 0 },
-});
+}, { strict: false }); // Allow dynamic fields from the ETL script
 
 export default mongoose.models.Customer || mongoose.model<ICustomer>("Customer", CustomerSchema);

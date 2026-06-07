@@ -53,6 +53,7 @@ export async function POST(req: Request) {
 Your job is to:
 1. Advise customer success representatives on how to retain the customer currently under review.
 2. Answer questions about the Churn Shield AI platform itself.
+3. If the user greets you with a simple greeting (e.g., "hola", "hello", "hi"), greet them back warmly, introduce yourself, and ask how you can help today. Do NOT dump detailed customer diagnostics, risk statistics, or emails immediately unless they ask you to analyze the customer or draft an email.
 
 Here is the profile of the customer currently selected/under review:
 ${customerDetails}
@@ -106,7 +107,13 @@ Keep your answers concise and directly related to the customer or the platform.`
 }
 
 function getFallbackAIResponse(userQuery: string, customer: any): string {
-  const query = userQuery.toLowerCase();
+  const query = userQuery.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?¿¡]/g, "");
+  
+  // Clean greeting check
+  const isGreeting = /^(hola|hello|hi|buenos\s+dias|buenos\s+días|buenas\s+tardes|buenas\s+noches|saludos|que\s+tal|qué\s+tal)$/i.test(query);
+  if (isGreeting) {
+    return `¡Hola! Soy tu asistente de retención Churn Shield AI para Arca Continental. Estoy aquí para ayudarte a analizar la retención de clientes o a redactar correos para evitar el abandono. ¿En qué te puedo ayudar hoy?`;
+  }
   
   if (query.includes("correo") || query.includes("email") || query.includes("redact") || query.includes("escrib")) {
     return `Claro, aquí tienes una propuesta de correo electrónico redactada para **${customer.name}** para evitar que se vaya:

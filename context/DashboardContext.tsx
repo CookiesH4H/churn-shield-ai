@@ -144,7 +144,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   const fetchDashboardCustomers = async (search = "", page = 1) => {
     try {
-      const res = await fetch(`/api/customers?limit=5&page=${page}&search=${encodeURIComponent(search)}`);
+      const res = await fetch(`/api/customers?limit=10&page=${page}&search=${encodeURIComponent(search)}`);
       const data = await res.json();
       if (data && data.customers) {
         setDashboardCustomers(data.customers);
